@@ -18,21 +18,25 @@ class ChatListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Widget _avatar = Padding(
+    final Widget avatar = Padding(
       padding: EdgeInsets.all(8.0),
       child: Stack(
         alignment: AlignmentDirectional.bottomEnd,
         children: <Widget>[
-          CircleAvatar(
-            radius: 32.0,
-            backgroundColor: Colors.blue[300],
-            foregroundColor: Colors.black54,
-            backgroundImage: NetworkImage(_chatItem.avatar),
-            /*Icon(
-              Icons.tag_faces,
-              size: 48.0,
-            ),*/
-          ),
+          if (_chatItem.avatar == "")
+            CircleAvatar(
+              radius: 32.0,
+              backgroundColor: Colors.blue[300],
+              foregroundColor: Colors.white,
+              child: Text(_chatItem.initials, style: TextStyle(fontSize: 20.0)),
+            ),
+          if (_chatItem.avatar != "")
+            CircleAvatar(
+              radius: 32.0,
+              backgroundColor: Colors.blue[300],
+              // TODO catch loading error
+              backgroundImage: NetworkImage(_chatItem.avatar),
+            ),
           if (_chatItem.isOnline)
             CircleAvatar(
               radius: 8.0,
@@ -46,15 +50,15 @@ class ChatListItem extends StatelessWidget {
       ),
     );
 
-    final Text _header = Text(
+    final Text header = Text(
       _chatItem.title,
       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
     );
 
-    final Text _lastMessage = Text(_chatItem.shortDescription);
-    final Text _lastMessageTime = Text(_chatItem.lastMessageDate);
+    final Text lastMessage = Text(_chatItem.shortDescription);
+    final Text lastMessageTime = Text(_chatItem.lastMessageDate);
 
-    Widget _unreadMessageCount() {
+    Widget unreadMessageCount() {
       if (_chatItem.messageCount > 0) {
         return Container(
             constraints: BoxConstraints(minWidth: 24.0),
@@ -73,28 +77,29 @@ class ChatListItem extends StatelessWidget {
       }
     }
 
-    final Widget _textDivider = SizedBox(height: 8.0);
+    final Widget textDivider = SizedBox(height: 8.0);
 
     assert(debugCheckHasMaterial(context));
     return Material(
       child: Container(
         height: 80.0,
         child: InkWell(
-          highlightColor: Colors.cyanAccent,
-          splashColor: Colors.cyan,
+          highlightColor: Colors.blue,
+          splashColor: Colors.blue,
           onTap: () {
-            print("Tapped");
+            print("Chat item tapped");
+            Navigator.pushNamed(context, "/messageList", arguments: _chatItem);
           },
           child: Row(
             children: <Widget>[
-              _avatar,
+              avatar,
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.all(8.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[_header, _textDivider, _lastMessage],
+                    children: <Widget>[header, textDivider, lastMessage],
                   ),
                 ),
               ),
@@ -104,9 +109,9 @@ class ChatListItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    _lastMessageTime,
-                    _textDivider,
-                    _unreadMessageCount(),
+                    lastMessageTime,
+                    textDivider,
+                    unreadMessageCount(),
                   ],
                 ),
               ),

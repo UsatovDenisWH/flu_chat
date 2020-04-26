@@ -1,4 +1,5 @@
 import 'package:fluchat/ui/chat_list/chat_list_route.dart';
+import 'package:fluchat/ui/message_list/message_list_route.dart';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -12,7 +13,11 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: ChatListRoute(), //MyHomePage,
+        initialRoute: "/chatList",
+        routes: {
+          "/chatList": (context) => ChatListRoute(),
+          "/messageList": (context) => MessageListRoute(),
+        },
       );
 }
 
