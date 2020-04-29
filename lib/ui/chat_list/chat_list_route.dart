@@ -2,33 +2,13 @@ import 'dart:math';
 
 import 'package:fluchat/models/chat_item.dart';
 import 'package:fluchat/ui/chat_list/chat_list_item.dart';
+import 'package:fluchat/utils/data_generator.dart';
 import 'package:flutter/material.dart';
 
 class ChatListRoute extends StatelessWidget {
-  // Generator of chat list items
-  final List<ChatItem> _chatItems = List.generate(20, (int i) {
-    i++;
+  // Get chat items
+  final List<ChatItem> _chatItems = DataGenerator.getDemoChatItems();
 
-    String _avatar;
-    if (Random().nextInt(5) % 5 != 0) {
-      _avatar = "https://picsum.photos/250?image=${i * Random().nextInt(33)}";
-    } else {
-      _avatar = "";
-    }
-
-    return ChatItem(
-      id: "$i",
-      avatar: _avatar,
-      initials: "АК",
-      title: "Андрюха Куролесов $i",
-      shortDescription: "Привет! Как дела?",
-      messageCount: i % 5 * Random().nextInt(100),
-      lastMessageDate: "19:49",
-      isOnline: Random().nextBool(),
-      chatType: ChatType.SINGLE,
-      author: "Гена Лодочкин",
-    );
-  });
 
   @override
   Widget build(BuildContext context) => Scaffold(

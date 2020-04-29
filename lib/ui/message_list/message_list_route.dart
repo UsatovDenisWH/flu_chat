@@ -1,11 +1,16 @@
 import 'package:fluchat/models/chat_item.dart';
+import 'package:fluchat/models/message_item.dart';
 import 'package:fluchat/ui/message_list/message_list_item.dart';
+import 'package:fluchat/utils/data_generator.dart';
 import 'package:flutter/material.dart';
 
 class MessageListRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // Get current chat item
     ChatItem chatItem = ModalRoute.of(context).settings.arguments as ChatItem;
+    // Get a list of messages from the current chat
+    final List<MessageItem> messageItems = DataGenerator.getDemoTextMessageItems();
 
     String titleSubscription;
     if (chatItem.isOnline) {
@@ -65,13 +70,13 @@ class MessageListRoute extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Expanded(
-            child: ListView.separated(
+            child: ListView.builder(
                 padding: EdgeInsets.all(0),
-                itemCount: 10,
+                itemCount: messageItems.length,
                 itemBuilder: (BuildContext context, int index) =>
-                    MessageListItem(),
-                separatorBuilder: (BuildContext context, int index) =>
-                    const Divider(height: 1)),
+                    MessageListItem(messageItems[index]),
+                /*separatorBuilder: (BuildContext context, int index) =>
+                    const Divider(height: 0)*/),
           ),
           Container(
             height: 48.0,
@@ -80,6 +85,7 @@ class MessageListRoute extends StatelessWidget {
               children: <Widget>[
                 IconButton(
                   icon: Icon(Icons.tag_faces),
+                  color: Colors.black38,
                   onPressed: () {
                     print("emodzi pressed");
                   },
@@ -93,12 +99,14 @@ class MessageListRoute extends StatelessWidget {
                 ),
                 IconButton(
                   icon: Icon(Icons.attach_file),
+                  color: Colors.black38,
                   onPressed: () {
                     print("emodzi pressed");
                   },
                 ),
                 IconButton(
                   icon: Icon(Icons.camera_alt),
+                  color: Colors.black38,
                   onPressed: () {
                     print("emodzi pressed");
                   },
