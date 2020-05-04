@@ -1,14 +1,29 @@
-import 'dart:math';
-
 import 'package:fluchat/models/chat_item.dart';
 import 'package:fluchat/ui/chat_list/chat_list_item.dart';
-import 'package:fluchat/utils/data_generator.dart';
 import 'package:flutter/material.dart';
+import '../../di_container.dart';
 
-class ChatListRoute extends StatelessWidget {
-  // Get chat items
-  final List<ChatItem> _chatItems = DataGenerator.getDemoChatItems();
+// Widget class
+class ChatListRoute extends StatefulWidget {
+  final List<ChatItem> _chatItems;
 
+  ChatListRoute(this._chatItems);
+
+  @override
+  State<StatefulWidget> createState() => ChatListRouteState(_chatItems);
+}
+
+// State class
+class ChatListRouteState extends State<ChatListRoute> {
+  List<ChatItem> _chatItems;
+
+  ChatListRouteState(this._chatItems);
+
+  _refreshChatList() {
+    setState(() {
+      _chatItems = DiContainer().getInjector().get<List<ChatItem>>();
+    });
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -39,6 +54,11 @@ class ChatListRoute extends StatelessWidget {
                   ChatListItem(_chatItems[index]),
               separatorBuilder: (BuildContext context, int index) =>
                   const Divider(height: 0)),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _refreshChatList,
+          child: Icon(Icons.refresh, size: 30.0),
+          backgroundColor: Colors.blue,
         ),
       );
 }

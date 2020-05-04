@@ -5,14 +5,13 @@ import 'package:fluchat/models/message_item.dart';
 
 class DataGenerator {
   // Generator of chat list items
-  static List<ChatItem> getDemoChatItems() =>
-      List.generate(20, (int i) {
+  List<ChatItem> getDemoChatItems() => List.generate(20, (int i) {
         i++;
 
         String _avatar;
         if (Random().nextInt(5) % 5 != 0) {
           _avatar =
-          "https://picsum.photos/250?image=${i * Random().nextInt(33)}";
+              "https://picsum.photos/250?image=${i * Random().nextInt(33)}";
         } else {
           _avatar = "";
         }
@@ -32,7 +31,7 @@ class DataGenerator {
       });
 
 // Generator of message list items
-  static List<MessageItem> getDemoTextMessageItems() =>
+  List<MessageItem> getDemoTextMessageItems(String chatId) =>
       List.generate(10, (int i) {
         i++;
         return MessageItem(
@@ -42,7 +41,7 @@ class DataGenerator {
           isIncoming: Random().nextBool(),
           date: DateTime.now(),
           isReaded: Random().nextBool(),
-          text: "Привет $i!",
+          text: "Это чат $chatId. Привет $i!",
           messageType: MessageType.TEXT,
         );
       });
