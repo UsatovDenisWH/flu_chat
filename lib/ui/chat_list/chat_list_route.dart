@@ -10,14 +10,14 @@ class ChatListRoute extends StatefulWidget {
   ChatListRoute(this._chatItems);
 
   @override
-  State<StatefulWidget> createState() => ChatListRouteState(_chatItems);
+  State<StatefulWidget> createState() => _ChatListRouteState(_chatItems);
 }
 
 // State class
-class ChatListRouteState extends State<ChatListRoute> {
+class _ChatListRouteState extends State<ChatListRoute> {
   List<ChatItem> _chatItems;
 
-  ChatListRouteState(this._chatItems);
+  _ChatListRouteState(this._chatItems);
 
   _refreshChatList() {
     setState(() {

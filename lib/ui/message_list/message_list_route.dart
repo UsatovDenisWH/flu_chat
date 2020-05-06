@@ -12,15 +12,15 @@ class MessageListRoute extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() =>
-      MessageListRouteState(_chatItem, _messageItems);
+      _MessageListRouteState(_chatItem, _messageItems);
 }
 
 // State class
-class MessageListRouteState extends State<MessageListRoute> {
+class _MessageListRouteState extends State<MessageListRoute> {
   ChatItem _chatItem;
   List<MessageItem> _messageItems;
 
-  MessageListRouteState(this._chatItem, this._messageItems);
+  _MessageListRouteState(this._chatItem, this._messageItems);
 
   _addMessage(String message) {
     setState(() {
