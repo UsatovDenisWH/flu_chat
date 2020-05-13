@@ -2,7 +2,7 @@
 import 'dart:async';
 
 import 'package:fluchat/blocs/common/base_bloc.dart';
-import 'package:fluchat/models/chat_item.dart';
+import 'package:fluchat/models/chat/chat_item.dart';
 
 class ChatListBloc extends BlocBase {
 

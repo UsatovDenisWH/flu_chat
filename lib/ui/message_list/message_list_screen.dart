@@ -4,23 +4,23 @@ import 'package:fluchat/ui/message_list/message_list_item.dart';
 import 'package:flutter/material.dart';
 
 // Widget class
-class MessageListRoute extends StatefulWidget {
+class MessageListScreen extends StatefulWidget {
   ChatItem _chatItem;
   List<MessageItem> _messageItems;
 
-  MessageListRoute(this._chatItem, this._messageItems);
+  MessageListScreen(this._chatItem, this._messageItems);
 
   @override
   State<StatefulWidget> createState() =>
-      _MessageListRouteState(_chatItem, _messageItems);
+      _MessageListScreenState(_chatItem, _messageItems);
 }
 
 // State class
-class _MessageListRouteState extends State<MessageListRoute> {
+class _MessageListScreenState extends State<MessageListScreen> {
   ChatItem _chatItem;
   List<MessageItem> _messageItems;
 
-  _MessageListRouteState(this._chatItem, this._messageItems);
+  _MessageListScreenState(this._chatItem, this._messageItems);
 
   _addMessage(String message) {
     setState(() {

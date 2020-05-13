@@ -1,7 +1,8 @@
 import 'dart:math';
 
-import 'package:fluchat/models/chat_item.dart';
-import 'package:fluchat/models/message_item.dart';
+import 'package:fluchat/models/chat/chat.dart';
+import 'package:fluchat/models/chat/chat_item.dart';
+import 'package:fluchat/models/message/message_item.dart';
 
 class DataGenerator {
   // Generator of chat list items
@@ -22,11 +23,10 @@ class DataGenerator {
           initials: "АК",
           title: "Андрюха Куролесов $i",
           shortDescription: "Привет! Как дела?",
-          messageCount: i % 5 * Random().nextInt(100),
+          unreadMessageCount: i % 5 * Random().nextInt(100),
           lastMessageDate: "19:49",
           isOnline: Random().nextBool(),
-          chatType: ChatType.SINGLE,
-          author: "Гена Лодочкин",
+          chatType: ChatType.SINGLE_CHAT,
         );
       });
 

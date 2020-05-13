@@ -1,4 +1,4 @@
-import 'package:fluchat/models/chat_item.dart';
+import 'package:fluchat/models/chat/chat_item.dart';
 import 'package:fluchat/ui/message_list/message_list_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../../di_container.dart';
 
 class ChatListItem extends StatelessWidget {
-  final _injector = DiContainer().getInjector();
+  final _injector = DiContainer.getInjector();
   final ChatItem _chatItem;
 
   ChatListItem(this._chatItem);
@@ -56,7 +56,7 @@ class ChatListItem extends StatelessWidget {
     final Text _lastMessageTime = Text(_chatItem.lastMessageDate);
 
     Widget _unreadMessageCount() {
-      if (_chatItem.messageCount > 0) {
+      if (_chatItem.unreadMessageCount > 0) {
         return Container(
             constraints: BoxConstraints(minWidth: 24.0),
             decoration: BoxDecoration(
@@ -66,9 +66,9 @@ class ChatListItem extends StatelessWidget {
             padding: EdgeInsets.all(4.0),
             alignment: Alignment.center,
             child: Text(
-              (_chatItem.messageCount > 9999)
+              (_chatItem.unreadMessageCount > 9999)
                   ? "9999+"
-                  : _chatItem.messageCount.toString(),
+                  : _chatItem.unreadMessageCount.toString(),
               style: TextStyle(color: Colors.white),
             ));
       } else {

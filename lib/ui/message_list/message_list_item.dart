@@ -1,4 +1,4 @@
-import 'package:fluchat/models/message_item.dart';
+import 'package:fluchat/models/message/message_item.dart';
 import 'package:flutter/material.dart';
 
 class MessageListItem extends StatelessWidget {
