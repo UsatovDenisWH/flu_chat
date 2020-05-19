@@ -1,5 +1,7 @@
 import 'dart:core';
 
+import 'package:fluchat/models/message/base_message.dart';
+
 // item to display in the message list
 class MessageItem {
   final String id;
@@ -23,4 +25,4 @@ class MessageItem {
   });
 }
 
-enum MessageType { TEXT, IMAGE, VIDEO }
+

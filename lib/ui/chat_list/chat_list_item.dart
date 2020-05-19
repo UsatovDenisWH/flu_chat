@@ -32,7 +32,7 @@ class ChatListItem extends StatelessWidget {
               // TODO catch loading error
               backgroundImage: NetworkImage(_chatItem.avatar),
             ),
-          if (_chatItem.isOnline)
+          if (_chatItem.isOnline != null && _chatItem.isOnline)
             CircleAvatar(
               radius: 8.0,
               backgroundColor: Colors.white,

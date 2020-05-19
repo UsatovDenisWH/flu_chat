@@ -1,3 +1,4 @@
+import 'file:///E:/Soft/AndroidStudioProjects/flu_chat/lib/data/data_source/dummy_data_source.dart';
 import 'package:fluchat/data/repository.dart';
 import 'package:fluchat/models/message/base_message.dart';
 import 'package:fluchat/models/chat/chat.dart';
@@ -5,8 +6,10 @@ import 'package:fluchat/models/message/image_message.dart';
 import 'package:fluchat/models/message/text_message.dart';
 import 'package:fluchat/models/user.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
 /*
   test("Method getInterlocutors()", () {
     User currentUser = User(firstName: "Василий Соловьев");
@@ -22,9 +25,16 @@ void main() {
   });
 */
 
-  test("Creating single chat", () {
+  test("Creating single chat", () async {
     User currentUser = User(firstName: "Василий Соловьев");
     Repository.setCurrentUser(currentUser);
+//    SharedPreferences.setMockInitialValues({
+//      "currentUser_id": currentUser.id,
+//      "currentUser_firstName": currentUser.firstName,
+//      "currentUser_lastName": currentUser.lastName,
+//      "currentUser_avatar": currentUser.avatar
+//    });
+    Repository.initRepository(DummyDataSource());
     User anotherUser = User(
         firstName: "  Акакий  Акакиевич      ",
         avatar: "https://pixabay.com/images/id-5077020/");

@@ -1,4 +1,5 @@
 import 'package:fluchat/models/chat/chat_item.dart';
+import 'package:fluchat/models/message/base_message.dart';
 import 'package:fluchat/models/message/message_item.dart';
 import 'package:fluchat/ui/message_list/message_list_item.dart';
 import 'package:flutter/material.dart';
@@ -42,7 +43,7 @@ class _MessageListScreenState extends State<MessageListScreen> {
   @override
   Widget build(BuildContext context) {
     String titleSubscription;
-    if (_chatItem.isOnline) {
+    if (_chatItem.isOnline != null && _chatItem.isOnline) {
       titleSubscription = "в сети";
     } else {
       // TODO replace "_chatItem.lastMessageDate" with "user.lastSeen"

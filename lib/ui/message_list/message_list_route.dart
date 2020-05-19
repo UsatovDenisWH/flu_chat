@@ -1,4 +1,5 @@
 import 'package:fluchat/models/chat/chat_item.dart';
+import 'package:fluchat/models/message/base_message.dart';
 import 'package:fluchat/models/message/message_item.dart';
 import 'package:fluchat/ui/message_list/message_list_item.dart';
 import 'package:flutter/material.dart';

@@ -2,10 +2,44 @@ import 'dart:math';
 
 import 'package:fluchat/models/chat/chat.dart';
 import 'package:fluchat/models/chat/chat_item.dart';
+import 'package:fluchat/models/message/base_message.dart';
+import 'package:fluchat/models/message/image_message.dart';
 import 'package:fluchat/models/message/message_item.dart';
+import 'package:fluchat/models/message/text_message.dart';
+import 'package:fluchat/models/user.dart';
 
 class DataGenerator {
-  // Generator of chat list items
+  static List<Chat> getDemoChats({User currentUser}) {
+    var currentlyUser = currentUser ?? User(firstName: "DataGenerator Default");
+    return List.generate(10, (int i) {
+      i++;
+      var avatar = "";
+      if (Random().nextInt(5) % 5 != 0) {
+        avatar = "https://picsum.photos/250?image=${i * Random().nextInt(33)}";
+      }
+      var anotherUser = User(
+          firstName: "Штурмовик $i",
+          avatar: avatar,
+          isOnline: Random().nextBool());
+
+      List<BaseMessage> messages = [
+        ImageMessage(
+            id: 1,
+            from: currentlyUser,
+            date: DateTime.now(),
+            image: "https://pixabay.com/images/id-5077020/"),
+        TextMessage(
+            id: 2,
+            from: anotherUser,
+            date: DateTime.now(),
+            text: "Привет! Как дела?")
+      ];
+
+      return Chat(
+          members: <User>[currentlyUser, anotherUser], messages: messages);
+    });
+  }
+
   List<ChatItem> getDemoChatItems() => List.generate(20, (int i) {
         i++;
 
@@ -30,7 +64,6 @@ class DataGenerator {
         );
       });
 
-// Generator of message list items
   List<MessageItem> getDemoTextMessageItems(String chatId) =>
       List.generate(10, (int i) {
         i++;

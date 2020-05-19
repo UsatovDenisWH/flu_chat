@@ -1,4 +1,4 @@
-import 'package:fluchat/data/repository.dart';
+import 'package:fluchat/di_container.dart';
 import 'package:fluchat/models/message/base_message.dart';
 import 'package:fluchat/models/chat/chat_item.dart';
 import 'package:fluchat/models/message/image_message.dart';
@@ -36,75 +36,76 @@ class Chat {
     // TODO add validation this.title.isNotEmpty for ChatType.GROUP_CHAT
   }
 
-  void setIdReadMessage({@required int value}) {
+  setIdReadMessage({@required int value}) {
     var _property = UserProperty.ID_READ_MESSAGE;
     _setUserProperty(property: _property, value: value);
   }
 
-  void setIdDeliveredMessage({@required int value}) {
+  setIdDeliveredMessage({@required int value}) {
     var _property = UserProperty.ID_DELIVERED_MESSAGE;
     _setUserProperty(property: _property, value: value);
   }
 
-  void setIsArchiveChat({@required bool value}) {
+  setIsArchiveChat({@required bool value}) {
     var _property = UserProperty.IS_ARCHIVE_CHAT;
     _setUserProperty(property: _property, value: value);
   }
 
-  void setIsSilentMode({@required bool value}) {
+  setIsSilentMode({@required bool value}) {
     var _property = UserProperty.IS_SILENT_MODE;
     _setUserProperty(property: _property, value: value);
   }
 
-  void setUserRole({@required UserRole value}) {
+  setUserRole({@required UserRole value}) {
     var _property = UserProperty.USER_ROLE;
     _setUserProperty(property: _property, value: value);
   }
 
   ChatItem toChatItem() {
-    var _interlocutors = _getInterlocutors();
-    String _avatar;
-    String _initials;
-    String _title;
-    String _shortDescription = "Сообщений ещё нет";
-    bool _isOnline;
-    String _lastMessageDate = _getLastMessageDate().toString();
+    var interlocutors = _getInterlocutors();
+    String avatar;
+    String initials;
+    String title;
+    String shortDescription = "Сообщений ещё нет";
+    bool isOnline;
+    String lastMessageDate = _getLastMessageDate().toString();
 
-    BaseMessage _lastMessage = _getLastMessage();
-    if (_lastMessage != null) {
-      if (_lastMessage.runtimeType == TextMessage) {
-        _shortDescription = _lastMessage.getText();
-      } else if (_lastMessage.runtimeType == ImageMessage) {
-        _shortDescription = "\u{1F4F7}" + " Фото";
+    BaseMessage lastMessage = _getLastMessage();
+    if (lastMessage != null) {
+      if (lastMessage.runtimeType == TextMessage) {
+        shortDescription = lastMessage.getText();
+      } else if (lastMessage.runtimeType == ImageMessage) {
+        shortDescription = "\u{1F4F7}" + " Фото";
       }
     }
 
     if (this.chatType == ChatType.SINGLE_CHAT) {
-      var _user = _interlocutors[0];
-      _avatar = _user.avatar;
-      _initials = _user.toInitials();
-      _title = _user.getFullName();
-      _isOnline = _user.isOnline;
+      var user = interlocutors[0];
+      avatar = user.avatar;
+      initials = user.toInitials();
+      title = user.getFullName();
+      isOnline = user.isOnline;
     } else {
       // ChatType.GROUP_CHAT
-      _avatar = this.avatar;
-      _initials = "";
-      _title = this.title;
-      _isOnline = false;
-      if (_lastMessage != null) {
-        _shortDescription =
-            _lastMessage.from.getFullName() + ": " + _shortDescription;
+      avatar = this.avatar;
+      initials = "";
+      title = this.title;
+      isOnline = false;
+      if (lastMessage != null) {
+        shortDescription =
+            lastMessage.from.getFullName() + ": " + shortDescription;
       }
     }
 
     return ChatItem(
         id: this.id,
-        avatar: _avatar,
-        initials: _initials,
-        title: _title,
-        shortDescription: _shortDescription,
-        lastMessageDate: _lastMessageDate,
-        isOnline: _isOnline,
+        avatar: avatar ?? "",
+        initials: initials ?? "",
+        title: title ?? "",
+        shortDescription: shortDescription ?? "",
+        lastMessageDate: lastMessageDate,
+        // TODO add humanize format in string
+        isOnline: isOnline ?? false,
         chatType: this.chatType,
         chatMode: this.chatMode,
         unreadMessageCount: _getUnreadMessageCount(),
@@ -132,60 +133,64 @@ class Chat {
   DateTime _getLastMessageDate() => _getLastMessage()?.date;
 
   List<User> _getInterlocutors() {
-    var _currentUser = Repository.getCurrentUser();
-    var _chatMembers = List<User>.from(members);
-    _chatMembers.remove(_currentUser);
-    return _chatMembers;
+    var currentUser = DiContainer.getRepository().getCurrentUser();
+    var chatMembers = List<User>.from(members);
+    chatMembers.remove(currentUser);
+    return chatMembers;
   }
 
   int _getUnreadMessageCount() {
-    int _readMessageId;
+    int readMessageId;
     if (usersPropertiesMap.isNotEmpty) {
-      var _userId = Repository.getCurrentUser().id;
-      _readMessageId =
-          usersPropertiesMap[_userId][UserProperty.ID_READ_MESSAGE] as int;
+      var currentUser = DiContainer.getRepository().getCurrentUser();
+      var userId = currentUser.id;
+      readMessageId =
+          usersPropertiesMap[userId][UserProperty.ID_READ_MESSAGE] as int;
     }
-    _readMessageId ??= 0;
-    var _lastMessageId = _getLastMessage()?.id ?? 0;
-    return _lastMessageId - _readMessageId;
+    readMessageId ??= 0;
+    var lastMessageId = _getLastMessage()?.id ?? 0;
+    return lastMessageId - readMessageId;
   }
 
   bool _isArchiveChat() {
-    bool _isArchiveChat;
+    bool isArchiveChat;
     if (usersPropertiesMap.isNotEmpty) {
-      var _userId = Repository.getCurrentUser().id;
-      _isArchiveChat =
-          usersPropertiesMap[_userId][UserProperty.IS_ARCHIVE_CHAT] as bool;
+      var currentUser = DiContainer.getRepository().getCurrentUser();
+      var userId = currentUser.id;
+      isArchiveChat =
+          usersPropertiesMap[userId][UserProperty.IS_ARCHIVE_CHAT] as bool;
     }
-    return _isArchiveChat ?? false;
+    return isArchiveChat ?? false;
   }
 
   bool _isSilentMode() {
-    bool _isSilentMode;
+    bool isSilentMode;
     if (usersPropertiesMap.isNotEmpty) {
-      var _userId = Repository.getCurrentUser().id;
-      _isSilentMode =
-          usersPropertiesMap[_userId][UserProperty.IS_SILENT_MODE] as bool;
+      var currentUser = DiContainer.getRepository().getCurrentUser();
+      var userId = currentUser.id;
+      isSilentMode =
+          usersPropertiesMap[userId][UserProperty.IS_SILENT_MODE] as bool;
     }
-    return _isSilentMode ?? false;
+    return isSilentMode ?? false;
   }
 
   UserRole _getUserRole() {
-    UserRole _userRole;
+    UserRole userRole;
     if (usersPropertiesMap.isNotEmpty) {
-      var _userId = Repository.getCurrentUser().id;
-      _userRole =
-          usersPropertiesMap[_userId][UserProperty.USER_ROLE] as UserRole;
+      var currentUser = DiContainer.getRepository().getCurrentUser();
+      var userId = currentUser.id;
+      userRole = usersPropertiesMap[userId][UserProperty.USER_ROLE] as UserRole;
     }
-    return _userRole ?? UserRole.USER;
+    return userRole ?? UserRole.USER;
   }
 
   void _setUserProperty({@required UserProperty property, @required value}) {
-    var _currentUserId = Repository.getCurrentUser().id;
-    if (!usersPropertiesMap.containsKey(_currentUserId)) {
-      usersPropertiesMap[_currentUserId] = Map();
+    var currentUser = DiContainer.getRepository().getCurrentUser();
+    var userId = currentUser.id;
+    if (!usersPropertiesMap.containsKey(userId)) {
+      usersPropertiesMap[userId] = Map();
     }
-    usersPropertiesMap[_currentUserId][property] = value;
+    usersPropertiesMap[userId][property] = value;
   }
 }
 

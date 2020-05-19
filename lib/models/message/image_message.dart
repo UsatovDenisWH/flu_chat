@@ -7,7 +7,7 @@ class ImageMessage extends BaseMessage {
 
   ImageMessage(
       {int id, User from, DateTime date, this.image = ""})
-      : super(id, from, date);
+      : super(id, from, date, MessageType.IMAGE);
 
   @override
   String getImage() => this.image;

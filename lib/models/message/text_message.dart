@@ -6,7 +6,7 @@ class TextMessage extends BaseMessage {
   String text;
 
   TextMessage({int id, User from, DateTime date, this.text = ""})
-      : super(id, from, date);
+      : super(id, from, date, MessageType.TEXT);
 
   @override
   String getText() => this.text;

@@ -5,8 +5,9 @@ abstract class BaseMessage {
   final int id;
   final User from;
   final DateTime date;
+  final MessageType messageType;
 
-  BaseMessage(this.id, this.from, this.date);
+  BaseMessage(this.id, this.from, this.date, this.messageType);
 
   String getText() => null;
 
@@ -14,3 +15,5 @@ abstract class BaseMessage {
 
   String getInfoText() => null;
 }
+
+enum MessageType { TEXT, IMAGE, VIDEO }
