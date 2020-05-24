@@ -1,10 +1,15 @@
 import 'package:fluchat/blocs/login_bloc.dart';
+import 'package:fluchat/blocs/message_list_bloc.dart';
 import 'package:fluchat/blocs/startup_bloc.dart';
 import 'package:fluchat/data/data_source/i_data_source.dart';
 import 'package:fluchat/data/i_repository.dart';
 import 'package:fluchat/data/repository.dart';
+import 'package:fluchat/models/chat/chat.dart';
+import 'package:fluchat/models/message/base_message.dart';
+import 'package:fluchat/models/user.dart';
 import 'package:fluchat/ui/chat_list/chat_list_screen.dart';
 import 'package:fluchat/ui/login_screen.dart';
+import 'package:fluchat/ui/message_list/message_list_screen.dart';
 import 'package:fluchat/ui/startup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_simple_dependency_injection/injector.dart';
@@ -12,12 +17,11 @@ import 'package:flutter_simple_dependency_injection/injector.dart';
 import 'blocs/chat_list_bloc.dart';
 import 'blocs/common/bloc_provider.dart';
 import 'data/data_source/dummy_data_source.dart';
-import 'models/chat/chat_item.dart';
-import 'models/message/message_item.dart';
 
 typedef BlocProvider<StartupBloc> StartupScreenBuilder();
 typedef BlocProvider<LoginBloc> LoginScreenBuilder();
 typedef BlocProvider<ChatListBloc> ChatListScreenBuilder();
+typedef BlocProvider<MessageListBloc> MessageListScreenBuilder(Chat chat);
 
 class DiContainer {
   static Injector _injector;
@@ -29,6 +33,13 @@ class DiContainer {
     _registerDataSources();
     _registerServices();
     _registerScreenBuilders();
+  }
+
+  static Injector getInjector() {
+    if (_injector == null) {
+      initialize();
+    }
+    return _injector;
   }
 
   static Widget getStartupScreen() {
@@ -45,13 +56,6 @@ class DiContainer {
     return _injector.get<IRepository>();
   }
 
-  static Injector getInjector() {
-    if (_injector == null) {
-      initialize();
-    }
-    return _injector;
-  }
-
   static void _registerDataSources() {
     _injector.map<IDataSource>((i) => _dataSource, isSingleton: true);
     _injector.map<IRepository>((i) => _repository, isSingleton: true);
@@ -59,13 +63,40 @@ class DiContainer {
 
   static void _registerServices() {
     // List of chats
-    _injector.map<List<ChatItem>>((i) => i.get<IRepository>().getChatItems(),
+    _injector.map<Stream<List<Chat>>>((i) => i.get<IRepository>().outListChats,
         isSingleton: true);
 
-    // List of messages from a specific chat
-    _injector.map<List<MessageItem>>(
-        (i) => i.get<IRepository>().getMessageItems(),
+    // List of users
+    _injector.map<Stream<List<User>>>((i) => i.get<IRepository>().outListUsers,
         isSingleton: true);
+
+    // List of messages
+    _injector.map<Stream<List<BaseMessage>>>(
+        (i) => i.get<IRepository>().outListMessages,
+        isSingleton: true);
+
+/*
+    _injector.map<List<ChatItem>>((i) => i.get<IRepository>().getChatItems(),
+        isSingleton: true);
+*/
+
+/*
+    // List of messages from a specific chat
+    _injector.mapWithParams<Stream<List<BaseMessage>>>((i, p) {
+      Chat chat = p["chat"] as Chat;
+      assert(chat != null, "Missed settings for List<MessageItem> creation");
+      i.get<IRepository>().setListenerChat(chat: chat);
+      return i.get<IRepository>().outListMessages;
+    });
+*/
+
+/*
+    _injector.mapWithParams<List<MessageItem>>((i, p) {
+      Chat chat = p["chat"] as Chat;
+      assert(chat != null, "Missed settings for List<MessageItem> creation");
+      return i.get<IRepository>().getMessageItems(chat: chat);
+    });
+*/
 
 /*
     _injector.mapWithParams<List<MessageItem>>((i, p) {
@@ -97,16 +128,26 @@ class DiContainer {
     _injector.map<ChatListScreenBuilder>(
         (i) => () => BlocProvider<ChatListBloc>(
               child: ChatListScreen(),
-              bloc: ChatListBloc(i.get<List<ChatItem>>()),
+              bloc: ChatListBloc(i.get<Stream<List<Chat>>>()),
             ),
         isSingleton: true);
 
     // Messages screen
+    _injector.map<MessageListScreenBuilder>(
+        (i) => (Chat chat) => BlocProvider<MessageListBloc>(
+              child: MessageListScreen(),
+              bloc: MessageListBloc(
+                  chat: chat,
+                  messagesStream: i.get<Stream<List<BaseMessage>>>()),
+            ),
+        isSingleton: true);
+
 /*
     _injector.map<MessageListScreenBuilder>(
-        (i) => () => BlocProvider<MessageListBloc>(
-              child: MessageListScreen(),
-              bloc: MessageListBloc(i.get<List<MessageItem>>()),
+        (i) => (Chat chat) => BlocProvider<MessageListBloc>(
+              child: MessageListScreen(chatItem: chat.toChatItem()),
+              bloc: MessageListBloc(i.get<List<MessageItem>>(
+                  additionalParameters: {"chat": chat})),
             ),
         isSingleton: true);
 */

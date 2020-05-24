@@ -1,15 +1,13 @@
+import 'package:fluchat/blocs/chat_list_bloc.dart';
 import 'package:fluchat/models/chat/chat_item.dart';
-import 'package:fluchat/ui/message_list/message_list_route.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../di_container.dart';
-
 class ChatListItem extends StatelessWidget {
-  final _injector = DiContainer.getInjector();
+//  final _injector = DiContainer.getInjector();
   final ChatItem _chatItem;
+  final ChatListBloc _bloc;
 
-  ChatListItem(this._chatItem);
+  ChatListItem(this._chatItem, this._bloc);
 
   @override
   Widget build(BuildContext context) {
@@ -87,11 +85,16 @@ class ChatListItem extends StatelessWidget {
           splashColor: Colors.blue,
           onTap: () {
             print("Chat item tapped");
+            _bloc.onTapChatItem(context, _chatItem);
+
+/*
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => _injector.get<MessageListRoute>(
-                        additionalParameters: {"chatItem": _chatItem})));
+                    builder: (context) => _onTapChatItem(_chatItem)));
+*/
+//                    builder: (context) => _injector.get<MessageListRoute>(
+//                        additionalParameters: {"chatItem": _chatItem})));
 //            Navigator.pushNamed(context, "/messageList", arguments: _chatItem);
           },
           child: Row(

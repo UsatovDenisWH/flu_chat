@@ -68,14 +68,25 @@ class DataGenerator {
       List.generate(10, (int i) {
         i++;
         return MessageItem(
-          id: i.toString(),
-//  final User from;
-//  final Chat chat;
+          id: i,
           isIncoming: Random().nextBool(),
           date: DateTime.now(),
           isReaded: Random().nextBool(),
           text: "Это чат $chatId. Привет $i!",
           messageType: MessageType.TEXT,
         );
+      });
+
+  static List<User> getDemoUsers() => List.generate(10, (int i) {
+        i++;
+        var avatar = "";
+        if (Random().nextInt(5) % 5 != 0) {
+          avatar =
+              "https://picsum.photos/250?image=${i * Random().nextInt(33)}";
+        }
+        return User(
+            firstName: "Демо№$i",
+            avatar: avatar,
+            isOnline: Random().nextBool());
       });
 }

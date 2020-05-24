@@ -1,6 +1,5 @@
 import 'package:fluchat/blocs/chat_list_bloc.dart';
 import 'package:fluchat/blocs/common/bloc_provider.dart';
-import 'package:fluchat/di_container.dart';
 import 'package:fluchat/models/chat/chat_item.dart';
 import 'package:fluchat/models/user.dart';
 import 'package:fluchat/ui/chat_list/chat_list_item.dart';
@@ -16,18 +15,20 @@ class ChatListScreen extends StatefulWidget {
 class _ChatListScreenState extends State<ChatListScreen> {
   ChatListBloc _bloc;
   User _currentUser;
+  Stream<List<ChatItem>> _chatItemStream;
 
   @override
   void initState() {
+    super.initState();
     _bloc = BlocProvider.of(context);
-    _currentUser = DiContainer.getRepository().getCurrentUser();
+    _currentUser = _bloc.currentUser;
+    _chatItemStream = _bloc.outChatItems;
+    _bloc.refreshChatList();
   }
 
-  _refreshChatList() {
+  void _refreshChatList() {
     setState(() {
-      DiContainer.getRepository().setCurrentUser(user: User(firstName: "Refresh chat"));
-      _currentUser = DiContainer.getRepository().getCurrentUser();
-//      _chatItems = DiContainer().getInjector().get<List<ChatItem>>();
+      _bloc.refreshChatList();
     });
   }
 
@@ -54,7 +55,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
         ),
         body: SafeArea(
             child: StreamBuilder(
-          stream: _bloc.outChatItems,
+          stream: _chatItemStream,
           initialData: List<ChatItem>(),
           builder:
               (BuildContext context, AsyncSnapshot<List<ChatItem>> snapshot) {
@@ -65,28 +66,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
                   padding: EdgeInsets.all(0),
                   itemCount: snapshot.data.length,
                   itemBuilder: (BuildContext context, int index) =>
-                      ChatListItem(snapshot.data[index]),
+                      ChatListItem(snapshot.data[index], _bloc),
                   separatorBuilder: (BuildContext context, int index) =>
-                  const Divider(height: 0));
-
-              /*print("snapshot.data.length = ${snapshot.data.length}");
-              for (var i in snapshot.data) {
-                print("id = ${i.id}");
-                print("avatar = ${i.avatar}");
-                print("initials = ${i.initials}");
-                print("title = ${i.title}");
-                print("shortDescription = ${i.shortDescription}");
-                print("lastMessageDate = ${i.lastMessageDate}");
-                print("isOnline = ${i.isOnline}");
-                print("chatType = ${i.chatType}");
-                print("chatMode = ${i.chatMode}");
-                print("unreadMessageCount = ${i.unreadMessageCount}");
-                print("isArchiveChat = ${i.isArchiveChat}");
-                print("isSilentMode = ${i.isSilentMode}");
-                print("userRole = ${i.userRole}");
-              }
-              return Center(child: CircularProgressIndicator());*/
-
+                      const Divider(height: 0));
             }
           },
         )),

@@ -22,11 +22,13 @@ class LoginBloc extends BlocBase {
       {@required String firstName, String lastName, String password}) {
     _repository.setCurrentUser(
         user: User(firstName: firstName, lastName: lastName));
+    _currentUser = _repository.getCurrentUser();
     return true;
   }
 
   BlocProvider<BlocBase> getNextScreen() {
     var injector = DiContainer.getInjector();
+
     BlocProvider<ChatListBloc> chatScreen =
         (injector.get<ChatListScreenBuilder>())();
     BlocProvider<LoginBloc> loginScreen =

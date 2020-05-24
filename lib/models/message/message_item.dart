@@ -4,7 +4,7 @@ import 'package:fluchat/models/message/base_message.dart';
 
 // item to display in the message list
 class MessageItem {
-  final String id;
+  final int id;
 //  final User from;
 //  final Chat chat;
   final bool isIncoming;

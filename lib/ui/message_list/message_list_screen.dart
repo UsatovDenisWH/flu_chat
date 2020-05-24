@@ -1,3 +1,5 @@
+import 'package:fluchat/blocs/common/bloc_provider.dart';
+import 'package:fluchat/blocs/message_list_bloc.dart';
 import 'package:fluchat/models/chat/chat_item.dart';
 import 'package:fluchat/models/message/base_message.dart';
 import 'package:fluchat/models/message/message_item.dart';
@@ -6,29 +8,32 @@ import 'package:flutter/material.dart';
 
 // Widget class
 class MessageListScreen extends StatefulWidget {
-  ChatItem _chatItem;
-  List<MessageItem> _messageItems;
-
-  MessageListScreen(this._chatItem, this._messageItems);
-
   @override
-  State<StatefulWidget> createState() =>
-      _MessageListScreenState(_chatItem, _messageItems);
+  State<StatefulWidget> createState() => _MessageListScreenState();
 }
 
 // State class
 class _MessageListScreenState extends State<MessageListScreen> {
-  ChatItem _chatItem;
-  List<MessageItem> _messageItems;
+  MessageListBloc _bloc;
+  ChatItem _currentChatItem;
+  Stream<List<MessageItem>> _messageItemStream;
 
-  _MessageListScreenState(this._chatItem, this._messageItems);
+//  List<MessageItem> _messageItems;
+
+  @override
+  void initState() {
+    super.initState();
+    _bloc = BlocProvider.of(context);
+    _currentChatItem = _bloc.currentChat.toChatItem();
+    _messageItemStream = _bloc.outMessageItems;
+  }
 
   _addMessage(String message) {
     setState(() {
       print("onSubmitted: $message");
       // TODO change on add in MessageListItem
-      _messageItems.add(MessageItem(
-        id: "11",
+      /*     _messageItems.add(MessageItem(
+        id: 11,
         //    this.from,
         //    this.chat,
         isIncoming: false,
@@ -36,18 +41,18 @@ class _MessageListScreenState extends State<MessageListScreen> {
         isReaded: true,
         text: message,
         messageType: MessageType.TEXT,
-      ));
+      ));*/
     });
   }
 
   @override
   Widget build(BuildContext context) {
     String titleSubscription;
-    if (_chatItem.isOnline != null && _chatItem.isOnline) {
+    if (_currentChatItem.isOnline != null && _currentChatItem.isOnline) {
       titleSubscription = "в сети";
     } else {
       // TODO replace "_chatItem.lastMessageDate" with "user.lastSeen"
-      titleSubscription = "был: ${_chatItem.lastMessageDate}";
+      titleSubscription = "был: ${_currentChatItem.lastMessageDate}";
     }
 
     Widget _rowDivider = SizedBox(width: 8.0);
@@ -58,20 +63,22 @@ class _MessageListScreenState extends State<MessageListScreen> {
         title: Padding(
           padding: EdgeInsets.all(8.0),
           child: Row(children: <Widget>[
-            if (_chatItem.avatar == null || _chatItem.avatar == "")
+            if (_currentChatItem.avatar == null ||
+                _currentChatItem.avatar == "")
               CircleAvatar(
                 radius: 22.0,
                 backgroundColor: Colors.blue[300],
                 foregroundColor: Colors.white,
-                child:
-                    Text(_chatItem.initials, style: TextStyle(fontSize: 16.0)),
+                child: Text(_currentChatItem.initials,
+                    style: TextStyle(fontSize: 16.0)),
               ),
-            if (_chatItem.avatar != null && _chatItem.avatar != "")
+            if (_currentChatItem.avatar != null &&
+                _currentChatItem.avatar != "")
               CircleAvatar(
                 backgroundColor: Colors.blue[300],
                 radius: 22.0,
                 // TODO catch loading error
-                backgroundImage: NetworkImage(_chatItem.avatar),
+                backgroundImage: NetworkImage(_currentChatItem.avatar),
               ),
             _rowDivider,
             Expanded(
@@ -80,7 +87,7 @@ class _MessageListScreenState extends State<MessageListScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    _chatItem.title,
+                    _currentChatItem.title,
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                     overflow: TextOverflow.ellipsis,
@@ -103,12 +110,22 @@ class _MessageListScreenState extends State<MessageListScreen> {
     ScrollController _scrollController = ScrollController();
 
     Widget _listView = Expanded(
-      child: ListView.builder(
-        padding: EdgeInsets.all(0),
-        controller: _scrollController,
-        itemCount: _messageItems.length,
-        itemBuilder: (BuildContext context, int index) =>
-            MessageListItem(_messageItems[index]),
+      child: StreamBuilder(
+        stream: _messageItemStream,
+        initialData: List<MessageItem>(),
+        builder:
+            (BuildContext context, AsyncSnapshot<List<MessageItem>> snapshot) {
+          if (snapshot.data.isEmpty) {
+            return Center(child: CircularProgressIndicator());
+          } else {
+            return ListView.builder(
+                padding: EdgeInsets.all(0),
+                controller: _scrollController,
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) =>
+                    MessageListItem(snapshot.data[index], _bloc));
+          }
+        },
       ),
     );
 
@@ -135,9 +152,9 @@ class _MessageListScreenState extends State<MessageListScreen> {
                 _addMessage(message);
                 _textController.clear();
                 // every item have height ~50 pixels
-                _scrollController.animateTo(_messageItems.length * 50.0,
+/*                _scrollController.animateTo(_messageItems.length * 50.0,
                     duration: Duration(milliseconds: 1000),
-                    curve: Curves.easeInOutQuad);
+                    curve: Curves.easeInOutQuad);*/
               },
             ),
           ),

@@ -22,6 +22,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     TextEditingController firstNameController = TextEditingController();
     TextEditingController lastNameController = TextEditingController();
+    firstNameController.text = _currentUser?.firstName ?? "";
+    lastNameController.text = _currentUser?.lastName ?? "";
 
     return Scaffold(
         body: Stack(
@@ -37,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: "*First name",
-                  labelText: "First name"),
+                  labelText: "*First name"),
               controller: firstNameController,
               textInputAction: TextInputAction.next,
             ),
@@ -69,7 +71,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _submitCredential(String firstName, String lastName) {
+    // TODO check firstName length
     bool result = _bloc.loginUser(firstName: firstName, lastName: lastName);
+    // TODO handle result
     if (result) {
       Navigator.pushReplacement(
           context,
