@@ -14,9 +14,9 @@ abstract class IRepository {
   List<User> _users;
   Future<bool> isInitialized;
 
-  final _listChats = StreamController<List<Chat>>();
-  final _listUsers = StreamController<List<User>>();
-  final _listMessages = StreamController<List<BaseMessage>>();
+  final _listChats = StreamController<List<Chat>>.broadcast();
+  final _listUsers = StreamController<List<User>>.broadcast();
+  final _listMessages = StreamController<List<BaseMessage>>.broadcast();
 
   Sink<List<Chat>> get _inListChats => _listChats.sink;
 
@@ -36,6 +36,8 @@ abstract class IRepository {
 
   void setCurrentUser({@required User user});
 
+  Chat getChatById(String chatId);
+
   void addChat({@required Chat chat});
 
   void updateChat({@required Chat chat});
@@ -50,9 +52,7 @@ abstract class IRepository {
 
   void deleteMessage({@required Chat chat, @required BaseMessage message});
 
-  Chat getChatById(String chatId);
-
-  void onChangeInDataSource(bool event);
+  void onChangeInDataSource(DataSourceEvent event);
 
   void dispose();
 }

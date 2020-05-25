@@ -6,11 +6,12 @@ import 'package:fluchat/models/user.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class IDataSource {
-  final _changeInDataSource = StreamController<bool>.broadcast();
+  final _changeInDataSource = StreamController<DataSourceEvent>.broadcast();
 
-  Sink<bool> get _inChangeInDataSource => _changeInDataSource.sink;
+  Sink<DataSourceEvent> get _inChangeInDataSource => _changeInDataSource.sink;
 
-  Stream<bool> get outChangeInDataSource => _changeInDataSource.stream;
+  Stream<DataSourceEvent> get outChangeInDataSource =>
+      _changeInDataSource.stream;
 
   Future<List<Chat>> loadChats({@required User currentUser});
 
@@ -22,11 +23,9 @@ abstract class IDataSource {
 
   Future<List<User>> loadUsers();
 
-  Future<bool> addUser({@required User user});
-
   Future<bool> updateUser({@required User user});
-
-  Future<bool> deleteUser({@required User user});
 
   void dispose();
 }
+
+enum DataSourceEvent { CHATS_REFRESH, USERS_REFRESH }

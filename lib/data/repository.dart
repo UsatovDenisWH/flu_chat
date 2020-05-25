@@ -9,13 +9,12 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Repository implements IRepository {
-  Future<bool> isInitialized;
-
   IDataSource _dataSource;
   User _currentUser;
   Chat _listenerChat;
   List<Chat> _chats;
   List<User> _users;
+  Future<bool> isInitialized;
 
   final _listChats = StreamController<List<Chat>>.broadcast();
   final _listUsers = StreamController<List<User>>.broadcast();
@@ -39,6 +38,7 @@ class Repository implements IRepository {
     isInitialized = initRepository();
   }
 
+  @override
   Future<bool> initRepository() async {
     try {
       _currentUser = await _loadUserFromSPrefs();
@@ -63,57 +63,71 @@ class Repository implements IRepository {
 
     _inListChats.add(_chats);
     _inListUsers.add(_users);
-
     return true;
   }
 
+  @override
   User getCurrentUser() => _currentUser;
 
+  @override
   void setCurrentUser({@required User user}) {
     _currentUser = user;
     _saveUserToSPrefs(user: _currentUser).catchError(_handleException);
+    _dataSource.updateUser(user: user);
   }
 
+  @override
+  Chat getChatById(String chatId) {
+    var result = _chats.where((element) => element.id == chatId);
+    return result.toList()[0];
+  }
+
+  @override
   void addChat({@required Chat chat}) {
     // local changes
     _chats.add(chat);
 
-    // TODO data sources changes
+    // data sources changes
     _dataSource.addChat(chat: chat);
   }
 
+  @override
   void updateChat({@required Chat chat}) {
     // local changes
     var chatIndex = _chats.indexWhere((e) => e.id == chat.id);
     _chats[chatIndex] = chat;
 
-    // TODO data sources changes
+    // data sources changes
     _dataSource.updateChat(chat: chat);
   }
 
+  @override
   void deleteChat({@required Chat chat}) {
     // local changes
     var chatIndex = _chats.indexWhere((e) => e.id == chat.id);
     _chats.removeAt(chatIndex);
 
-    // TODO data sources changes
+    // data sources changes
     _dataSource.deleteChat(chat: chat);
   }
 
+  @override
   void setListenerChat({@required Chat chat}) {
     _listenerChat = chat;
     _inListMessages.add(_listenerChat.messages);
   }
 
+  @override
   void addMessage({@required Chat chat, @required BaseMessage message}) {
     // local changes
     var chatIndex = _chats.indexWhere((e) => e.id == chat.id);
     _chats[chatIndex].messages.add(message);
 
-    // TODO data sources changes
+    // data sources changes
     _dataSource.updateChat(chat: _chats[chatIndex]);
   }
 
+  @override
   void updateMessage({@required Chat chat, @required BaseMessage message}) {
     // local changes
     var chatIndex = _chats.indexWhere((e) => e.id == chat.id);
@@ -121,10 +135,11 @@ class Repository implements IRepository {
         _chats[chatIndex].messages.indexWhere((e) => e.id == message.id);
     _chats[chatIndex].messages[messageIndex] = message;
 
-    // TODO data sources changes
+    // data sources changes
     _dataSource.updateChat(chat: _chats[chatIndex]);
   }
 
+  @override
   void deleteMessage({@required Chat chat, @required BaseMessage message}) {
     // local changes
     var chatIndex = _chats.indexWhere((e) => e.id == chat.id);
@@ -132,22 +147,30 @@ class Repository implements IRepository {
         _chats[chatIndex].messages.indexWhere((e) => e.id == message.id);
     _chats[chatIndex].messages.removeAt(messageIndex);
 
-    // TODO data sources changes
+    // data sources changes
     _dataSource.updateChat(chat: _chats[chatIndex]);
   }
 
-  void onChangeInDataSource(bool event) async {
-    if (event == true) {
+  @override
+  void onChangeInDataSource(DataSourceEvent event) async {
+    if (event == DataSourceEvent.CHATS_REFRESH) {
       _chats = await _dataSource.loadChats(currentUser: _currentUser);
       _inListChats.add(_chats);
-
+    } else if (event == DataSourceEvent.USERS_REFRESH) {
       _users = await _dataSource.loadUsers();
       _inListUsers.add(_users);
-
-      if (_listenerChat != null) {
-        _inListMessages.add(_listenerChat.messages);
-      }
     }
+
+    if (_listenerChat != null) {
+      _inListMessages.add(_listenerChat.messages);
+    }
+  }
+
+  @override
+  void dispose() {
+    _listChats.close();
+    _listUsers.close();
+    _listMessages.close();
   }
 
   Future<User> _loadUserFromSPrefs() async {
@@ -176,18 +199,7 @@ class Repository implements IRepository {
     prefs.setString("flutter.currentUser_avatar", user.avatar ?? "");
   }
 
-  _handleException(error) {
+  void _handleException(error) {
     print("Error in class Repository: ${error.toString()}");
-  }
-
-  Chat getChatById(String chatId) {
-    var result = _chats.where((element) => element.id == chatId);
-    return result.toList()[0];
-  }
-
-  void dispose() {
-    _listChats.close();
-    _listUsers.close();
-    _listMessages.close();
   }
 }

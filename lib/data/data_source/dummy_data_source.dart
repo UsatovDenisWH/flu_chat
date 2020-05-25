@@ -7,56 +7,113 @@ import 'package:fluchat/utils/data_generator.dart';
 import 'package:flutter/foundation.dart';
 
 class DummyDataSource implements IDataSource {
-  final _changeInDataSource = StreamController<bool>.broadcast();
+  final _changeInDataSource = StreamController<DataSourceEvent>.broadcast();
 
-  Sink<bool> get _inChangeInDataSource => _changeInDataSource.sink;
+  Sink<DataSourceEvent> get _inChangeInDataSource => _changeInDataSource.sink;
 
-  Stream<bool> get outChangeInDataSource => _changeInDataSource.stream;
+  Stream<DataSourceEvent> get outChangeInDataSource =>
+      _changeInDataSource.stream;
+
+  static List<Chat> _demoChats;
+  static List<User> _demoUsers;
 
   @override
   Future<List<Chat>> loadChats({@required User currentUser}) async {
-    return await DataGenerator.getDemoChats(currentUser: currentUser);
+    if (_demoChats == null) {
+      _demoChats = await Future.delayed(Duration(seconds: 1),
+          () => DataGenerator.getDemoChats(currentUser: currentUser));
+    }
+    return _demoChats;
   }
 
   @override
-  Future<bool> addChat({@required Chat chat}) {
-    // TODO
-    _inChangeInDataSource.add(true);
+  Future<bool> addChat({@required Chat chat}) async {
+    bool result;
+    try {
+      await Future.delayed(Duration(milliseconds: 500), () {
+        _demoChats.add(chat);
+        result = true;
+      });
+    } on Exception catch (error) {
+      _handleException(error);
+      result = false;
+    }
+    if (result) _inChangeInDataSource.add(DataSourceEvent.CHATS_REFRESH);
+    return result;
   }
 
   @override
-  Future<bool> updateChat({@required Chat chat}) {
-    // TODO
-    _inChangeInDataSource.add(true);
+  Future<bool> updateChat({@required Chat chat}) async {
+    bool result;
+    try {
+      await Future.delayed(Duration(milliseconds: 500), () {
+        var chatIndex = _demoChats.indexWhere((e) => e.id == chat.id);
+        _demoChats[chatIndex] = chat;
+        result = true;
+      });
+    } on Exception catch (error) {
+      _handleException(error);
+      result = false;
+    }
+    if (result) _inChangeInDataSource.add(DataSourceEvent.CHATS_REFRESH);
+    return result;
   }
 
   @override
-  Future<bool> deleteChat({@required Chat chat}) {
-    // TODO
-    _inChangeInDataSource.add(true);
+  Future<bool> deleteChat({@required Chat chat}) async {
+    bool result;
+    try {
+      await Future.delayed(Duration(milliseconds: 500), () {
+        var chatIndex = _demoChats.indexWhere((e) => e.id == chat.id);
+        _demoChats.removeAt(chatIndex);
+        result = true;
+      });
+    } on Exception catch (error) {
+      _handleException(error);
+      result = false;
+    }
+    if (result) _inChangeInDataSource.add(DataSourceEvent.CHATS_REFRESH);
+    return result;
   }
 
   @override
   Future<List<User>> loadUsers() async {
-    return await DataGenerator.getDemoUsers();
+    if (_demoUsers == null) {
+      _demoUsers = await Future.delayed(
+          Duration(seconds: 1), DataGenerator.getDemoUsers);
+    }
+    return _demoUsers;
   }
 
   @override
-  Future<bool> addUser({@required User user}) {
-    // TODO
+  Future<bool> updateUser({@required User user}) async {
+    bool result;
+    try {
+      await Future.delayed(Duration(milliseconds: 500), () {
+        var userIndex = _demoUsers.indexWhere((e) => e.id == user.id);
+        if (userIndex != -1) {
+          // if this user FOUND - update him
+          _demoUsers[userIndex] = user;
+        } else {
+          // if this user NOT found - add him
+          _demoUsers.add(user);
+        }
+        result = true;
+      });
+    } on Exception catch (error) {
+      _handleException(error);
+      result = false;
+    }
+    if (result) _inChangeInDataSource.add(DataSourceEvent.USERS_REFRESH);
+    return result;
   }
 
   @override
-  Future<bool> updateUser({@required User user}) {
-    // TODO
-  }
-
-  @override
-  Future<bool> deleteUser({@required User user}) {
-    // TODO
-  }
-
   void dispose() {
     _changeInDataSource.close();
+  }
+
+  void _handleException(Exception error) {
+    print("Error in class DummyDataSource: ${error.toString()}");
   }
 }

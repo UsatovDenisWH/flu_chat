@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:fluchat/blocs/common/base_bloc.dart';
+import 'package:fluchat/data/data_source/i_data_source.dart';
 import 'package:fluchat/di_container.dart';
 import 'package:fluchat/models/chat/chat.dart';
 import 'package:fluchat/models/chat/chat_item.dart';
@@ -34,7 +35,7 @@ class ChatListBloc extends BlocBase {
   }
 
   void refreshChatList(){
-    _repository.onChangeInDataSource(true);
+    _repository.onChangeInDataSource(DataSourceEvent.CHATS_REFRESH);
   }
 
   void onTapChatItem(BuildContext context, ChatItem chatItem) {
