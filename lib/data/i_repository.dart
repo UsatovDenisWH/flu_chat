@@ -54,5 +54,11 @@ abstract class IRepository {
 
   void onChangeInDataSource(DataSourceEvent event);
 
+  void retransmissionDataCache(DataCacheEvent event);
+
   void dispose();
+}
+
+enum DataCacheEvent {
+  CHATS_REFRESH, USERS_REFRESH, MESSAGE_REFRESH
 }

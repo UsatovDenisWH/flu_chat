@@ -6,6 +6,7 @@ import 'package:fluchat/models/chat/chat.dart';
 import 'package:fluchat/models/message/base_message.dart';
 import 'package:fluchat/models/user.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_fimber/flutter_fimber.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Repository implements IRepository {
@@ -32,37 +33,44 @@ class Repository implements IRepository {
 
   Stream<List<BaseMessage>> get outListMessages => _listMessages.stream;
 
+  final _log = FimberLog("FLU_CHAT");
+  final _CURRENT_USER_ID = "CURRENT_USER_ID";
+  final _CURRENT_USER_FIRST_NAME = "CURRENT_USER_FIRST_NAME";
+  final _CURRENT_USER_LAST_NAME = "CURRENT_USER_LAST_NAME";
+  final _CURRENT_USER_AVATAR = "CURRENT_USER_AVATAR";
+
   Repository({@required IDataSource dataSource}) {
     _dataSource = dataSource;
     _dataSource.outChangeInDataSource.listen(onChangeInDataSource);
     isInitialized = initRepository();
+    _log.d("Repository create");
   }
 
   @override
   Future<bool> initRepository() async {
     try {
+      _users = await _dataSource.loadUsers();
+    } on Exception catch (error, stackTrace) {
+      _users = List<User>();
+      _handleException(error, stackTrace);
+    }
+
+    try {
       _currentUser = await _loadUserFromSPrefs();
-    } on Exception catch (error) {
-      _currentUser = User(firstName: "Repository Default");
-      _handleException(error);
+    } on Exception catch (error, stackTrace) {
+      _handleException(error, stackTrace);
     }
 
     try {
       _chats = await _dataSource.loadChats(currentUser: _currentUser);
-    } on Exception catch (error) {
+    } on Exception catch (error, stackTrace) {
       _chats = List<Chat>();
-      _handleException(error);
-    }
-
-    try {
-      _users = await _dataSource.loadUsers();
-    } on Exception catch (error) {
-      _users = List<User>();
-      _handleException(error);
+      _handleException(error, stackTrace);
     }
 
     _inListChats.add(_chats);
     _inListUsers.add(_users);
+    _log.d("Repository init");
     return true;
   }
 
@@ -71,9 +79,16 @@ class Repository implements IRepository {
 
   @override
   void setCurrentUser({@required User user}) {
+    var oldCurrentUser = _currentUser;
     _currentUser = user;
-    _saveUserToSPrefs(user: _currentUser).catchError(_handleException);
+    try {
+      _saveUserToSPrefs(user: _currentUser);
+    } on Exception catch (error, stackTrace) {
+      _handleException(error, stackTrace);
+    }
     _dataSource.updateUser(user: user);
+    if (oldCurrentUser == null)
+      onChangeInDataSource(DataSourceEvent.CHATS_REFRESH);
   }
 
   @override
@@ -114,7 +129,9 @@ class Repository implements IRepository {
   @override
   void setListenerChat({@required Chat chat}) {
     _listenerChat = chat;
-    _inListMessages.add(_listenerChat.messages);
+    if (_listenerChat != null) {
+      _inListMessages.add(_listenerChat.messages);
+    }
   }
 
   @override
@@ -156,13 +173,29 @@ class Repository implements IRepository {
     if (event == DataSourceEvent.CHATS_REFRESH) {
       _chats = await _dataSource.loadChats(currentUser: _currentUser);
       _inListChats.add(_chats);
+      _log.d("Repository onChangeInDataSource CHATS_REFRESH");
     } else if (event == DataSourceEvent.USERS_REFRESH) {
       _users = await _dataSource.loadUsers();
       _inListUsers.add(_users);
+      _log.d("Repository onChangeInDataSource USERS_REFRESH");
     }
 
     if (_listenerChat != null) {
       _inListMessages.add(_listenerChat.messages);
+      _log.d("Repository onChangeInDataSource _inListMessages.add");
+    }
+  }
+
+  void retransmissionDataCache(DataCacheEvent event) {
+    if (event == DataCacheEvent.CHATS_REFRESH) {
+      _inListChats.add(_chats);
+      _log.d("Repository retransmissionDataCache CHATS_REFRESH");
+    } else if (event == DataCacheEvent.USERS_REFRESH) {
+      _inListUsers.add(_users);
+      _log.d("Repository retransmissionDataCache USERS_REFRESH");
+    } else if (event == DataCacheEvent.MESSAGE_REFRESH && _listenerChat != null) {
+      _inListMessages.add(_listenerChat.messages);
+      _log.d("Repository retransmissionDataCache MESSAGE_REFRESH");
     }
   }
 
@@ -171,14 +204,18 @@ class Repository implements IRepository {
     _listChats.close();
     _listUsers.close();
     _listMessages.close();
+    _log.d("Repository dispose");
   }
 
   Future<User> _loadUserFromSPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    String id = prefs.getString("flutter.currentUser_id");
-    String firstName = prefs.getString("flutter.currentUser_firstName");
-    String lastName = prefs.getString("flutter.currentUser_lastName");
-    String avatar = prefs.getString("flutter.currentUser_avatar");
+    String id = prefs.getString(_CURRENT_USER_ID);
+    String firstName = prefs.getString(_CURRENT_USER_FIRST_NAME);
+    String lastName = prefs.getString(_CURRENT_USER_LAST_NAME);
+    String avatar = prefs.getString(_CURRENT_USER_AVATAR);
+    if (id == null || firstName == null) {
+      throw Exception("No data in SharedPreferences");
+    }
     DateTime lastVisit = DateTime.now();
     bool isOnline = true;
     User user = User(
@@ -193,13 +230,13 @@ class Repository implements IRepository {
 
   Future<void> _saveUserToSPrefs({@required User user}) async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setString("flutter.currentUser_id", user.id);
-    prefs.setString("flutter.currentUser_firstName", user.firstName);
-    prefs.setString("flutter.currentUser_lastName", user.lastName ?? "");
-    prefs.setString("flutter.currentUser_avatar", user.avatar ?? "");
+    prefs.setString(_CURRENT_USER_ID, user.id);
+    prefs.setString(_CURRENT_USER_FIRST_NAME, user.firstName);
+    prefs.setString(_CURRENT_USER_LAST_NAME, user.lastName ?? "");
+    prefs.setString(_CURRENT_USER_AVATAR, user.avatar ?? "");
   }
 
-  void _handleException(error) {
-    print("Error in class Repository: ${error.toString()}");
+  void _handleException(Exception error, StackTrace stackTrace) {
+    _log.d("Error in class Repository", ex: error, stacktrace: stackTrace);
   }
 }

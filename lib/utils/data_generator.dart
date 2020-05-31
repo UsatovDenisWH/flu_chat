@@ -1,16 +1,14 @@
 import 'dart:math';
 
 import 'package:fluchat/models/chat/chat.dart';
-import 'package:fluchat/models/chat/chat_item.dart';
 import 'package:fluchat/models/message/base_message.dart';
 import 'package:fluchat/models/message/image_message.dart';
-import 'package:fluchat/models/message/message_item.dart';
 import 'package:fluchat/models/message/text_message.dart';
 import 'package:fluchat/models/user.dart';
 
 class DataGenerator {
   static List<Chat> getDemoChats({User currentUser}) {
-    var currentlyUser = currentUser ?? User(firstName: "DataGenerator Default");
+    var currentlyUser = currentUser ?? User(firstName: "DataGenerator default");
     return List.generate(10, (int i) {
       i++;
       var avatar = "";
@@ -40,6 +38,20 @@ class DataGenerator {
     });
   }
 
+  static List<User> getDemoUsers() => List.generate(10, (int i) {
+        i++;
+        var avatar = "";
+        if (Random().nextInt(5) % 5 != 0) {
+          avatar =
+              "https://picsum.photos/250?image=${i * Random().nextInt(33)}";
+        }
+        return User(
+            firstName: "Демо№$i",
+            avatar: avatar,
+            isOnline: Random().nextBool());
+      });
+
+/*
   List<ChatItem> getDemoChatItems() => List.generate(20, (int i) {
         i++;
 
@@ -76,17 +88,6 @@ class DataGenerator {
           messageType: MessageType.TEXT,
         );
       });
+*/
 
-  static List<User> getDemoUsers() => List.generate(10, (int i) {
-        i++;
-        var avatar = "";
-        if (Random().nextInt(5) % 5 != 0) {
-          avatar =
-              "https://picsum.photos/250?image=${i * Random().nextInt(33)}";
-        }
-        return User(
-            firstName: "Демо№$i",
-            avatar: avatar,
-            isOnline: Random().nextBool());
-      });
 }

@@ -54,15 +54,19 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             SizedBox(height: 24.0),
             RaisedButton(
+              color: Colors.redAccent,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(4.0),
+                  side: BorderSide(color: Colors.white)),
               onPressed: () {
                 _submitCredential(firstNameController.text.toString(),
                     lastNameController.text.toString());
               },
-              child: Text("Submit",
+              child: Text("Login",
                   style: TextStyle(
                       color: Colors.white,
                       fontSize: 24.0,
-                      fontWeight: FontWeight.bold)),
+                      fontWeight: FontWeight.normal)),
             )
           ],
         )

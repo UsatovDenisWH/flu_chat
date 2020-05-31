@@ -5,14 +5,18 @@ import 'package:fluchat/blocs/login_bloc.dart';
 import 'package:fluchat/data/i_repository.dart';
 import 'package:fluchat/di_container.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_fimber/flutter_fimber.dart';
 
 class StartupBloc extends BlocBase {
   IRepository _repository;
-  Future<bool> _isRepoInit;
+  Future<bool> isRepoInit;
+
+  final _log = FimberLog("FLU_CHAT");
 
   StartupBloc({@required IRepository repository}) {
     _repository = repository;
-    _isRepoInit = _repository.initRepository();
+    isRepoInit = _repository.initRepository();
+    _log.d("StartupBloc create");
   }
 
   BlocProvider<BlocBase> getNextScreen() {
@@ -22,10 +26,12 @@ class StartupBloc extends BlocBase {
     BlocProvider<LoginBloc> loginScreen =
         (injector.get<LoginScreenBuilder>())();
 
-    if (_isRepoInit == true) {}
+    if (isRepoInit == true) {}
     return loginScreen;
   }
 
   @override
-  void dispose() {}
+  void dispose() {
+    _log.d("StartupBloc dispose");
+  }
 }

@@ -1,7 +1,9 @@
 import 'package:fluchat/di_container.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_fimber/flutter_fimber.dart';
 
 void main() {
+  Fimber.plantTree(FimberTree()); // initialize logger
   DiContainer.initialize();
   runApp(MyApp());
 }

@@ -5,6 +5,7 @@ import 'package:fluchat/models/chat/chat.dart';
 import 'package:fluchat/models/user.dart';
 import 'package:fluchat/utils/data_generator.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_fimber/flutter_fimber.dart';
 
 class DummyDataSource implements IDataSource {
   final _changeInDataSource = StreamController<DataSourceEvent>.broadcast();
@@ -17,9 +18,13 @@ class DummyDataSource implements IDataSource {
   static List<Chat> _demoChats;
   static List<User> _demoUsers;
 
+  final _log = FimberLog("FLU_CHAT");
+
   @override
   Future<List<Chat>> loadChats({@required User currentUser}) async {
-    if (_demoChats == null) {
+    if (currentUser == null) {
+      return List<Chat>();
+    } else if (_demoChats == null) {
       _demoChats = await Future.delayed(Duration(seconds: 1),
           () => DataGenerator.getDemoChats(currentUser: currentUser));
     }
@@ -34,8 +39,8 @@ class DummyDataSource implements IDataSource {
         _demoChats.add(chat);
         result = true;
       });
-    } on Exception catch (error) {
-      _handleException(error);
+    } on Exception catch (error, stackTrace) {
+      _handleException(error, stackTrace);
       result = false;
     }
     if (result) _inChangeInDataSource.add(DataSourceEvent.CHATS_REFRESH);
@@ -51,8 +56,8 @@ class DummyDataSource implements IDataSource {
         _demoChats[chatIndex] = chat;
         result = true;
       });
-    } on Exception catch (error) {
-      _handleException(error);
+    } on Exception catch (error, stackTrace) {
+      _handleException(error, stackTrace);
       result = false;
     }
     if (result) _inChangeInDataSource.add(DataSourceEvent.CHATS_REFRESH);
@@ -68,8 +73,8 @@ class DummyDataSource implements IDataSource {
         _demoChats.removeAt(chatIndex);
         result = true;
       });
-    } on Exception catch (error) {
-      _handleException(error);
+    } on Exception catch (error, stackTrace) {
+      _handleException(error, stackTrace);
       result = false;
     }
     if (result) _inChangeInDataSource.add(DataSourceEvent.CHATS_REFRESH);
@@ -100,8 +105,8 @@ class DummyDataSource implements IDataSource {
         }
         result = true;
       });
-    } on Exception catch (error) {
-      _handleException(error);
+    } on Exception catch (error, stackTrace) {
+      _handleException(error, stackTrace);
       result = false;
     }
     if (result) _inChangeInDataSource.add(DataSourceEvent.USERS_REFRESH);
@@ -113,7 +118,7 @@ class DummyDataSource implements IDataSource {
     _changeInDataSource.close();
   }
 
-  void _handleException(Exception error) {
-    print("Error in class DummyDataSource: ${error.toString()}");
+  void _handleException(Exception error, StackTrace stackTrace) {
+    _log.d("Error in class DummyDataSource", ex: error, stacktrace: stackTrace);
   }
 }

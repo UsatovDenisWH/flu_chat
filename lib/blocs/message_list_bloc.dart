@@ -6,6 +6,7 @@ import 'package:fluchat/models/chat/chat.dart';
 import 'package:fluchat/models/message/base_message.dart';
 import 'package:fluchat/models/message/message_item.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_fimber/flutter_fimber.dart';
 
 class MessageListBloc extends BlocBase {
   Chat currentChat;
@@ -18,11 +19,16 @@ class MessageListBloc extends BlocBase {
   Stream<List<MessageItem>> get outMessageItems =>
       _messageItemsController.stream;
 
-  MessageListBloc({@required Chat chat, @required Stream<List<BaseMessage>> messagesStream}) {
+  final _log = FimberLog("FLU_CHAT");
+
+  MessageListBloc(
+      {@required Chat chat,
+      @required Stream<List<BaseMessage>> messagesStream}) {
     currentChat = chat;
     _inMessagesStream = messagesStream;
     _inMessagesStream.listen(_forwardMessagesToMessageItems);
     _repository.setListenerChat(chat: currentChat);
+    _log.d("MessageListBloc create");
   }
 
   void _forwardMessagesToMessageItems(List<BaseMessage> messageList) {
@@ -52,12 +58,15 @@ class MessageListBloc extends BlocBase {
       } else if (message.messageType == MessageType.VIDEO) {}
     });
 
-    _inMessageItems.add(messageItems);
+    if (!_messageItemsController.isClosed) {
+      _inMessageItems.add(messageItems);
+    }
   }
 
   @override
   void dispose() {
     _messageItemsController.close();
     _repository.setListenerChat(chat: null);
+    _log.d("MessageListBloc dispose");
   }
 }

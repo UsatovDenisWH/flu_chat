@@ -11,11 +11,13 @@ class ChatListScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _ChatListScreenState();
 }
 
-// State class
 class _ChatListScreenState extends State<ChatListScreen> {
   ChatListBloc _bloc;
   User _currentUser;
   Stream<List<ChatItem>> _chatItemStream;
+  AppBar _appBar;
+  TextEditingController _searchQueryController = TextEditingController();
+  String _searchQuery;
 
   @override
   void initState() {
@@ -24,35 +26,74 @@ class _ChatListScreenState extends State<ChatListScreen> {
     _currentUser = _bloc.currentUser;
     _chatItemStream = _bloc.outChatItems;
     _bloc.refreshChatList();
+    _appBar = _defaultAppBar();
+    _searchQueryController.addListener(_updateSearchQuery);
   }
 
-  void _refreshChatList() {
+  void _setAppBar({@required AppBarAction action}) {
     setState(() {
-      _bloc.refreshChatList();
+      if (action == AppBarAction.SEARCH) {
+        _appBar = _searchAppBar();
+      } else {
+        _appBar = _defaultAppBar();
+      }
     });
   }
 
+  AppBar _defaultAppBar() => AppBar(
+        leading: Builder(
+          builder: (BuildContext context) => IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              _setAppBar(action: AppBarAction.MENU);
+              _bloc.onTapMenuButton();
+            },
+          ),
+        ),
+        title: Text(_currentUser.getFullName()),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              _setAppBar(action: AppBarAction.SEARCH);
+            },
+          ),
+        ],
+      );
+
+  AppBar _searchAppBar() => AppBar(
+        leading: Builder(
+          builder: (BuildContext context) => IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              _clearSearchQuery();
+              _setAppBar(action: AppBarAction.NONE);
+            },
+          ),
+        ),
+        title: TextField(
+          controller: _searchQueryController,
+          autofocus: true,
+          enableInteractiveSelection: false,
+          decoration: InputDecoration(
+            hintText: "Search...",
+            border: InputBorder.none,
+            hintStyle: TextStyle(color: Colors.white70, fontSize: 20.0),
+          ),
+          style: TextStyle(color: Colors.white, fontSize: 20.0),
+//          onChanged: (query) => _updateSearchQuery,
+        ),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.clear),
+            onPressed: _clearSearchQuery,
+          ),
+        ],
+      );
+
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          leading: Builder(
-            builder: (BuildContext context) => IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: () {
-                print("Button menu tapped");
-              },
-            ),
-          ),
-          title: Text(_currentUser.getFullName()),
-          actions: <Widget>[
-            IconButton(
-              icon: const Icon(Icons.search),
-              onPressed: () {
-                print("Button search tapped");
-              },
-            ),
-          ],
-        ),
+        appBar: _appBar,
         body: SafeArea(
             child: StreamBuilder(
           stream: _chatItemStream,
@@ -78,4 +119,25 @@ class _ChatListScreenState extends State<ChatListScreen> {
           backgroundColor: Colors.blue,
         ),
       );
+
+  void _updateSearchQuery() {
+    var newQuery = _searchQueryController.text;
+    setState(() {
+      _searchQuery = newQuery;
+    });
+    _bloc.setFilterChat(query: newQuery);
+  }
+
+  void _clearSearchQuery() {
+    _searchQueryController.clear();
+    _updateSearchQuery();
+  }
+
+  void _refreshChatList() {
+    setState(() {
+      _bloc.refreshChatList();
+    });
+  }
 }
+
+// State class
