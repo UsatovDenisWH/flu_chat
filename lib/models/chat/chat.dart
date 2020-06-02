@@ -6,6 +6,7 @@ import 'package:fluchat/models/message/text_message.dart';
 import 'package:fluchat/models/user.dart';
 import 'package:fluchat/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:fluchat/extensions/datetime_extension.dart';
 
 class Chat {
   String id;
@@ -68,7 +69,7 @@ class Chat {
     String title;
     String shortDescription = "Сообщений ещё нет";
     bool isOnline;
-    String lastMessageDate = _getLastMessageDate().toString();
+    String lastMessageDate = _getLastMessageDate().humanizeDiff();
 
     BaseMessage lastMessage = _getLastMessage();
     if (lastMessage != null) {
