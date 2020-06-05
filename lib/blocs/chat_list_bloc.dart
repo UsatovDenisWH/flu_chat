@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:fluchat/blocs/common/base_bloc.dart';
-import 'package:fluchat/data/data_source/i_data_source.dart';
 import 'package:fluchat/data/i_repository.dart';
 import 'package:fluchat/di_container.dart';
 import 'package:fluchat/models/chat/chat.dart';
@@ -51,8 +50,6 @@ class ChatListBloc extends BlocBase {
   void onTapChatItem(BuildContext context, ChatItem chatItem) {
     var chat = DiContainer.getRepository().getChatById(chatItem.id);
     var injector = DiContainer.getInjector();
-//    return (injector.get<MessageListScreenBuilder>())(chat);
-
     Navigator.push(
         context,
         MaterialPageRoute(

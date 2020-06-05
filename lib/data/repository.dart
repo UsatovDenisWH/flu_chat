@@ -48,6 +48,7 @@ class Repository implements IRepository {
 
   @override
   Future<bool> initRepository() async {
+    _log.d("Repository initRepository() start");
     try {
       _users = await _dataSource.loadUsers();
     } on Exception catch (error, stackTrace) {
@@ -70,25 +71,32 @@ class Repository implements IRepository {
 
     _inListChats.add(_chats);
     _inListUsers.add(_users);
-    _log.d("Repository init");
+    _log.d("Repository initRepository() end");
     return true;
   }
 
   @override
-  User getCurrentUser() => _currentUser;
+  User getCurrentUser() {
+    _log.d("getCurrentUser()");
+    return _currentUser;
+  }
 
   @override
   void setCurrentUser({@required User user}) {
+    _log.d("setCurrentUser()");
+
     var oldCurrentUser = _currentUser;
     _currentUser = user;
+
+    _dataSource.updateUser(user: user);
+    if (oldCurrentUser == null)
+      onChangeInDataSource(DataSourceEvent.CHATS_REFRESH);
+
     try {
       _saveUserToSPrefs(user: _currentUser);
     } on Exception catch (error, stackTrace) {
       _handleException(error, stackTrace);
     }
-    _dataSource.updateUser(user: user);
-    if (oldCurrentUser == null)
-      onChangeInDataSource(DataSourceEvent.CHATS_REFRESH);
   }
 
   @override
@@ -170,6 +178,8 @@ class Repository implements IRepository {
 
   @override
   void onChangeInDataSource(DataSourceEvent event) async {
+    _log.d("Repository onChangeInDataSource()");
+
     if (event == DataSourceEvent.CHATS_REFRESH) {
       _chats = await _dataSource.loadChats(currentUser: _currentUser);
       _inListChats.add(_chats);
@@ -187,6 +197,8 @@ class Repository implements IRepository {
   }
 
   void retransmissionDataCache(DataCacheEvent event) {
+    _log.d("Repository retransmissionDataCache()");
+
     if (event == DataCacheEvent.CHATS_REFRESH) {
       _inListChats.add(_chats);
       _log.d("Repository retransmissionDataCache CHATS_REFRESH");
@@ -208,6 +220,7 @@ class Repository implements IRepository {
   }
 
   Future<User> _loadUserFromSPrefs() async {
+    _log.d("Repository _loadUserFromSPrefs() start");
     final prefs = await SharedPreferences.getInstance();
     String id = prefs.getString(_CURRENT_USER_ID);
     String firstName = prefs.getString(_CURRENT_USER_FIRST_NAME);
@@ -225,15 +238,18 @@ class Repository implements IRepository {
         lastVisit: lastVisit,
         isOnline: isOnline,
         id: id);
+    _log.d("Repository _loadUserFromSPrefs() end");
     return user;
   }
 
   Future<void> _saveUserToSPrefs({@required User user}) async {
+    _log.d("Repository _saveUserToSPrefs() start");
     final prefs = await SharedPreferences.getInstance();
     prefs.setString(_CURRENT_USER_ID, user.id);
     prefs.setString(_CURRENT_USER_FIRST_NAME, user.firstName);
     prefs.setString(_CURRENT_USER_LAST_NAME, user.lastName ?? "");
     prefs.setString(_CURRENT_USER_AVATAR, user.avatar ?? "");
+    _log.d("Repository _saveUserToSPrefs() end");
   }
 
   void _handleException(Exception error, StackTrace stackTrace) {

@@ -12,6 +12,7 @@ import 'package:fluchat/ui/login_screen.dart';
 import 'package:fluchat/ui/message_list/message_list_screen.dart';
 import 'package:fluchat/ui/startup_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_fimber/flutter_fimber.dart';
 import 'package:flutter_simple_dependency_injection/injector.dart';
 
 import 'blocs/chat_list_bloc.dart';
@@ -28,6 +29,8 @@ class DiContainer {
   static final IDataSource _dataSource = DummyDataSource();
   static final IRepository _repository = Repository(dataSource: _dataSource);
 
+  static final _log = FimberLog("FLU_CHAT");
+
   static initialize() {
     _injector = Injector.getInjector();
     _registerDataSources();
@@ -36,6 +39,7 @@ class DiContainer {
   }
 
   static Injector getInjector() {
+    _log.d("DiContainer getInjector()");
     if (_injector == null) {
       initialize();
     }
@@ -43,6 +47,7 @@ class DiContainer {
   }
 
   static Widget getStartupScreen() {
+    _log.d("DiContainer getStartupScreen()");
     if (_injector == null) {
       initialize();
     }
@@ -50,6 +55,7 @@ class DiContainer {
   }
 
   static IRepository getRepository() {
+    _log.d("DiContainer getRepository()");
     if (_injector == null) {
       initialize();
     }
@@ -74,37 +80,6 @@ class DiContainer {
     _injector.map<Stream<List<BaseMessage>>>(
         (i) => i.get<IRepository>().outListMessages,
         isSingleton: true);
-
-/*
-    _injector.map<List<ChatItem>>((i) => i.get<IRepository>().getChatItems(),
-        isSingleton: true);
-*/
-
-/*
-    // List of messages from a specific chat
-    _injector.mapWithParams<Stream<List<BaseMessage>>>((i, p) {
-      Chat chat = p["chat"] as Chat;
-      assert(chat != null, "Missed settings for List<MessageItem> creation");
-      i.get<IRepository>().setListenerChat(chat: chat);
-      return i.get<IRepository>().outListMessages;
-    });
-*/
-
-/*
-    _injector.mapWithParams<List<MessageItem>>((i, p) {
-      Chat chat = p["chat"] as Chat;
-      assert(chat != null, "Missed settings for List<MessageItem> creation");
-      return i.get<IRepository>().getMessageItems(chat: chat);
-    });
-*/
-
-/*
-    _injector.mapWithParams<List<MessageItem>>((i, p) {
-      String _chatId = p["chatId"] as String;
-      assert(_chatId != null, "Missed settings for MessageList creation");
-      return DataGenerator().getDemoTextMessageItems(_chatId);
-    });
-*/
   }
 
   static void _registerScreenBuilders() {
@@ -141,24 +116,5 @@ class DiContainer {
                   messagesStream: i.get<Stream<List<BaseMessage>>>()),
             ),
         isSingleton: true);
-
-/*
-    _injector.map<MessageListScreenBuilder>(
-        (i) => (Chat chat) => BlocProvider<MessageListBloc>(
-              child: MessageListScreen(chatItem: chat.toChatItem()),
-              bloc: MessageListBloc(i.get<List<MessageItem>>(
-                  additionalParameters: {"chat": chat})),
-            ),
-        isSingleton: true);
-*/
-
-/*    _injector.mapWithParams<MessageListRoute>((i, p) {
-      ChatItem _chatItem = p["chatItem"] as ChatItem;
-      assert(
-          _chatItem != null, "Missed settings for MessageListRoute creation");
-      final _messageList = i.get<List<MessageItem>>(
-          additionalParameters: {"chatId": _chatItem.id});
-      return MessageListRoute(_chatItem, _messageList);
-    });*/
   }
 }

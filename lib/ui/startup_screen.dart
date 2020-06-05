@@ -17,13 +17,6 @@ class _StartupScreenState extends State<StartupScreen> {
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
-
-    Timer(
-        Duration(seconds: 2),
-        () => Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-                builder: (BuildContext context) => _bloc.getNextScreen())));
   }
 
   @override
@@ -52,20 +45,23 @@ class _StartupScreenState extends State<StartupScreen> {
           FutureBuilder<bool>(
             future: _bloc.isRepoInit,
             builder: (context, snapshot) {
-              if (!snapshot.hasData || !snapshot.data) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    CircularProgressIndicator(
-                      strokeWidth: 2.0,
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                    SizedBox(height: 40.0)
-                  ],
-                );
-              } else {
-                return SizedBox.shrink();
+              if (snapshot.hasData && snapshot.data) {
+                Future.microtask(() => Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) =>
+                            _bloc.getNextScreen())));
               }
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  CircularProgressIndicator(
+                    strokeWidth: 2.0,
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  ),
+                  SizedBox(height: 40.0)
+                ],
+              );
             },
           ),
         ],

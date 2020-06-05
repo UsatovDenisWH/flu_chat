@@ -15,7 +15,7 @@ class StartupBloc extends BlocBase {
 
   StartupBloc({@required IRepository repository}) {
     _repository = repository;
-    isRepoInit = _repository.initRepository();
+    isRepoInit = _repository.isInitialized;
     _log.d("StartupBloc create");
   }
 
@@ -26,7 +26,9 @@ class StartupBloc extends BlocBase {
     BlocProvider<LoginBloc> loginScreen =
         (injector.get<LoginScreenBuilder>())();
 
-    if (isRepoInit == true) {}
+    if (isRepoInit == true) {
+      // TODO choice next screen
+    }
     return loginScreen;
   }
 

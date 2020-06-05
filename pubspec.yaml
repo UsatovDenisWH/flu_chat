@@ -32,6 +32,8 @@ dependencies:
 
   flutter_fimber: ^0.4.2
 
+  dio: ^3.0.9
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
