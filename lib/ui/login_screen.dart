@@ -30,27 +30,66 @@ class _LoginScreenState extends State<LoginScreen> {
       fit: StackFit.expand,
       children: <Widget>[
         Container(
-          decoration: BoxDecoration(color: Colors.redAccent),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.0, 1.0],
+              colors: [Colors.redAccent, Colors.yellowAccent],
+            ),
+          ),
         ),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            TextField(
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "*First name",
-                  labelText: "*First name"),
-              controller: firstNameController,
-              textInputAction: TextInputAction.next,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Flexible(
+                  flex: 1,
+                  child: SizedBox.shrink(),
+                ),
+                Flexible(
+                  flex: 8,
+                  child: TextField(
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: "*First name",
+                        labelText: "*First name"),
+                    controller: firstNameController,
+                    textInputAction: TextInputAction.next,
+                  ),
+                ),
+                Flexible(
+                  flex: 1,
+                  child: SizedBox.shrink(),
+                ),
+              ],
             ),
             SizedBox(height: 24.0),
-            TextField(
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: "Last name",
-                  labelText: "Last name"),
-              controller: lastNameController,
-              textInputAction: TextInputAction.next,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Flexible(
+                  flex: 1,
+                  child: SizedBox.shrink(),
+                ),
+                Flexible(
+                  flex: 8,
+                  child: TextField(
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        hintText: "Last name",
+                        labelText: "Last name"),
+                    controller: lastNameController,
+                    textInputAction: TextInputAction.next,
+                  ),
+                ),
+                Flexible(
+                  flex: 1,
+                  child: SizedBox.shrink(),
+                ),
+              ],
             ),
             SizedBox(height: 24.0),
             RaisedButton(
@@ -83,7 +122,6 @@ class _LoginScreenState extends State<LoginScreen> {
           context,
           MaterialPageRoute(
               builder: (BuildContext context) => _bloc.getNextScreen()));
-
     }
   }
 }

@@ -26,9 +26,6 @@ typedef BlocProvider<MessageListBloc> MessageListScreenBuilder(Chat chat);
 
 class DiContainer {
   static Injector _injector;
-  static final IDataSource _dataSource = DummyDataSource();
-  static final IRepository _repository = Repository(dataSource: _dataSource);
-
   static final _log = FimberLog("FLU_CHAT");
 
   static initialize() {
@@ -40,31 +37,27 @@ class DiContainer {
 
   static Injector getInjector() {
     _log.d("DiContainer getInjector()");
-    if (_injector == null) {
-      initialize();
-    }
+    assert(_injector != null);
     return _injector;
   }
 
   static Widget getStartupScreen() {
     _log.d("DiContainer getStartupScreen()");
-    if (_injector == null) {
-      initialize();
-    }
+    assert(_injector != null);
     return (_injector.get<StartupScreenBuilder>())();
   }
 
   static IRepository getRepository() {
     _log.d("DiContainer getRepository()");
-    if (_injector == null) {
-      initialize();
-    }
+    assert(_injector != null);
     return _injector.get<IRepository>();
   }
 
   static void _registerDataSources() {
-    _injector.map<IDataSource>((i) => _dataSource, isSingleton: true);
-    _injector.map<IRepository>((i) => _repository, isSingleton: true);
+    _injector.map<IDataSource>((i) => DummyDataSource(), isSingleton: true);
+    _injector.map<IRepository>(
+        (i) => Repository(dataSource: i.get<IDataSource>()),
+        isSingleton: true);
   }
 
   static void _registerServices() {

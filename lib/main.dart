@@ -4,7 +4,7 @@ import 'package:flutter_fimber/flutter_fimber.dart';
 
 void main() {
   Fimber.plantTree(FimberTree()); // initialize logger
-  DiContainer.initialize();
+  DiContainer.initialize(); // initialize DI
   runApp(MyApp());
 }
 

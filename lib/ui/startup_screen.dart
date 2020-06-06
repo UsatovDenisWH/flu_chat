@@ -24,7 +24,14 @@ class _StartupScreenState extends State<StartupScreen> {
         alignment: AlignmentDirectional.bottomCenter,
         children: <Widget>[
           Container(
-            decoration: BoxDecoration(color: Colors.redAccent),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [0.0, 1.0],
+                colors: [Colors.redAccent, Colors.yellowAccent],
+              ),
+            ),
           ),
           Center(
             child: Column(
