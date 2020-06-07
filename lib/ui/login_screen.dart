@@ -1,6 +1,6 @@
 import 'package:fluchat/blocs/common/bloc_provider.dart';
 import 'package:fluchat/blocs/login_bloc.dart';
-import 'package:fluchat/models/user.dart';
+import 'package:fluchat/models/user/user.dart';
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {

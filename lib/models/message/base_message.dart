@@ -1,5 +1,5 @@
-import 'package:fluchat/models/chat/chat.dart';
-import 'package:fluchat/models/user.dart';
+import 'package:fluchat/models/message/message_item.dart';
+import 'package:fluchat/models/user/user.dart';
 
 abstract class BaseMessage {
   final int id;
@@ -14,6 +14,8 @@ abstract class BaseMessage {
   String getImage() => null;
 
   String getInfoText() => null;
+
+  MessageItem toMessageItem();
 }
 
-enum MessageType { TEXT, IMAGE, VIDEO }
+enum MessageType { TEXT, IMAGE , VIDEO }

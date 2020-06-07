@@ -1,8 +1,7 @@
-import 'file:///E:/Soft/AndroidStudioProjects/flu_chat/lib/data/data_source/dummy_data_source.dart';
-import 'package:fluchat/data/repository.dart';
-import 'package:fluchat/models/user.dart';
+import 'package:fluchat/models/user/user.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -23,16 +22,16 @@ void main() {
     });
   });
 
-  test("Init repo DummyDataSource", () async {
-    User currentUser = User(firstName: "Василий Соловьев");
-//    SharedPreferences.setMockInitialValues({
-//      "currentUser_id": currentUser.id,
-//      "currentUser_firstName": currentUser.firstName,
-//      "currentUser_lastName": currentUser.lastName,
-//      "currentUser_avatar": currentUser.avatar
-//    });
-    Repository.initRepository(DummyDataSource());
-    var user = Repository.getCurrentUser();
-    print(user.toString());
-  });
+//  test("Init repo DummyDataSource", () async {
+//    User currentUser = User(firstName: "Василий Соловьев");
+////    SharedPreferences.setMockInitialValues({
+////      "currentUser_id": currentUser.id,
+////      "currentUser_firstName": currentUser.firstName,
+////      "currentUser_lastName": currentUser.lastName,
+////      "currentUser_avatar": currentUser.avatar
+////    });
+//    Repository.initRepository(DummyDataSource());
+//    var user = Repository().getCurrentUser();
+//    print(user.toString());
+//  });
 }

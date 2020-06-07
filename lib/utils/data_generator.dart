@@ -4,7 +4,7 @@ import 'package:fluchat/models/chat/chat.dart';
 import 'package:fluchat/models/message/base_message.dart';
 import 'package:fluchat/models/message/image_message.dart';
 import 'package:fluchat/models/message/text_message.dart';
-import 'package:fluchat/models/user.dart';
+import 'package:fluchat/models/user/user.dart';
 
 class DataGenerator {
   static List<Chat> getDemoChats({User currentUser}) {

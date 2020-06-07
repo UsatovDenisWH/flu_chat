@@ -3,7 +3,7 @@ import 'package:fluchat/blocs/common/base_bloc.dart';
 import 'package:fluchat/blocs/common/bloc_provider.dart';
 import 'package:fluchat/blocs/login_bloc.dart';
 import 'package:fluchat/data/i_repository.dart';
-import 'package:fluchat/di_container.dart';
+import 'package:fluchat/di/di_container.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 

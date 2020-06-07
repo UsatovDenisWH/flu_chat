@@ -1,7 +1,6 @@
 import 'package:fluchat/blocs/common/bloc_provider.dart';
 import 'package:fluchat/blocs/message_list_bloc.dart';
 import 'package:fluchat/models/chat/chat_item.dart';
-import 'package:fluchat/models/message/base_message.dart';
 import 'package:fluchat/models/message/message_item.dart';
 import 'package:fluchat/ui/message_list/message_list_item.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +23,7 @@ class _MessageListScreenState extends State<MessageListScreen> {
   void initState() {
     super.initState();
     _bloc = BlocProvider.of(context);
-    _currentChatItem = _bloc.currentChat.toChatItem();
+    _currentChatItem = _bloc.currentChatItem;
     _messageItemStream = _bloc.outMessageItems;
   }
 

@@ -1,24 +1,31 @@
 import 'dart:async';
 
 import 'package:fluchat/data/data_source/i_data_source.dart';
+import 'package:fluchat/di/i_stream_assembly.dart';
 import 'package:fluchat/models/chat/chat.dart';
-import 'package:fluchat/models/user.dart';
+import 'package:fluchat/models/user/user.dart';
 import 'package:fluchat/utils/rest_data_generator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 
 class DummyDataSource implements IDataSource {
-  final _changeInDataSource = StreamController<DataSourceEvent>.broadcast();
+//  final _changeInDataSource = StreamController<DataSourceEvent>.broadcast();
+//
+//  Sink<DataSourceEvent> get _inChangeInDataSource => _changeInDataSource.sink;
+//
+//  Stream<DataSourceEvent> get outChangeInDataSource =>
+//      _changeInDataSource.stream;
 
-  Sink<DataSourceEvent> get _inChangeInDataSource => _changeInDataSource.sink;
-
-  Stream<DataSourceEvent> get outChangeInDataSource =>
-      _changeInDataSource.stream;
+  Sink<DataSourceEvent> _inChangeInDataSource;
 
   static List<Chat> _demoChats;
   static List<User> _demoUsers;
 
   final _log = FimberLog("FLU_CHAT");
+
+  DummyDataSource({@required IStreamAssembly streamAssembly}) {
+    this._inChangeInDataSource = streamAssembly.changeInDataSource.sink;
+  }
 
   @override
   Future<List<Chat>> loadChats({@required User currentUser}) async {
@@ -115,10 +122,11 @@ class DummyDataSource implements IDataSource {
 
   @override
   void dispose() {
-    _changeInDataSource.close();
+//    _changeInDataSource.close();
   }
 
   void _handleException(Exception error, StackTrace stackTrace) {
     _log.d("Error in class DummyDataSource", ex: error, stacktrace: stackTrace);
   }
+
 }

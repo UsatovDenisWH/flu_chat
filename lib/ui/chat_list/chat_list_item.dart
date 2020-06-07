@@ -3,7 +3,6 @@ import 'package:fluchat/models/chat/chat_item.dart';
 import 'package:flutter/material.dart';
 
 class ChatListItem extends StatelessWidget {
-//  final _injector = DiContainer.getInjector();
   final ChatItem _chatItem;
   final ChatListBloc _bloc;
 
@@ -86,16 +85,6 @@ class ChatListItem extends StatelessWidget {
           onTap: () {
             print("Chat item tapped");
             _bloc.onTapChatItem(context, _chatItem);
-
-/*
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => _onTapChatItem(_chatItem)));
-*/
-//                    builder: (context) => _injector.get<MessageListRoute>(
-//                        additionalParameters: {"chatItem": _chatItem})));
-//            Navigator.pushNamed(context, "/messageList", arguments: _chatItem);
           },
           child: Row(
             children: <Widget>[

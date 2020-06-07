@@ -2,45 +2,26 @@ import 'dart:async';
 
 import 'package:fluchat/blocs/common/base_bloc.dart';
 import 'package:fluchat/data/i_repository.dart';
-import 'package:fluchat/di_container.dart';
-import 'package:fluchat/models/chat/chat.dart';
+import 'package:fluchat/di/di_container.dart';
+import 'package:fluchat/di/i_stream_assembly.dart';
 import 'package:fluchat/models/chat/chat_item.dart';
-import 'package:fluchat/models/user.dart';
+import 'package:fluchat/models/user/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 
 class ChatListBloc extends BlocBase {
   User currentUser;
-  String _chatFilter;
-  final Stream<List<Chat>> _inChatsStream;
-  final _chatItemsController = StreamController<List<ChatItem>>();
-
-  Sink<List<ChatItem>> get _inChatItems => _chatItemsController.sink;
-
-  Stream<List<ChatItem>> get outChatItems => _chatItemsController.stream;
-
+  IStreamAssembly _streamAssembly;
+  Stream<List<ChatItem>> outChatItems;
   final _repository = DiContainer.getRepository();
 
   final _log = FimberLog("FLU_CHAT");
 
-  ChatListBloc(this._inChatsStream) {
-    _inChatsStream.listen(_forwardChatsToChatItems);
+  ChatListBloc({@required IStreamAssembly streamAssembly}) {
+    _streamAssembly = streamAssembly;
+    outChatItems = streamAssembly.listChatItems.stream;
     currentUser = _repository.getCurrentUser();
     _log.d("ChatListBloc create");
-  }
-
-  void _forwardChatsToChatItems(List<Chat> chatsList) {
-    List<ChatItem> chatItems = [];
-    ChatItem item;
-
-    chatsList.forEach((chat) {
-      item = chat.toChatItem();
-      if (_isPassesFilter(item)) {
-        chatItems.add(item);
-      }
-    });
-
-    _inChatItems.add(chatItems);
   }
 
   void refreshChatList() {
@@ -48,13 +29,12 @@ class ChatListBloc extends BlocBase {
   }
 
   void onTapChatItem(BuildContext context, ChatItem chatItem) {
-    var chat = DiContainer.getRepository().getChatById(chatItem.id);
     var injector = DiContainer.getInjector();
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) =>
-                (injector.get<MessageListScreenBuilder>())(chat)));
+                (injector.get<MessageListScreenBuilder>())(chatItem)));
   }
 
   void onTapMenuButton() {
@@ -63,23 +43,13 @@ class ChatListBloc extends BlocBase {
   }
 
   void setFilterChat({@required String query}) {
-    _chatFilter = query;
+    _streamAssembly.filterChatItems = query;
     refreshChatList();
     _log.d("ChatListBloc setFilterChat = $query");
   }
 
-  bool _isPassesFilter(ChatItem item) {
-    if (_chatFilter == null || _chatFilter.isEmpty) {
-      return true;
-    } else if (item.title.toLowerCase().contains(_chatFilter.toLowerCase())) {
-      return true;
-    }
-    return false;
-  }
-
   @override
   void dispose() {
-    _chatItemsController.close();
     _log.d("ChatListBloc dispose");
   }
 }

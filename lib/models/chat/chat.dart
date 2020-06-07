@@ -1,9 +1,9 @@
-import 'package:fluchat/di_container.dart';
+import 'package:fluchat/di/di_container.dart';
 import 'package:fluchat/models/message/base_message.dart';
 import 'package:fluchat/models/chat/chat_item.dart';
 import 'package:fluchat/models/message/image_message.dart';
 import 'package:fluchat/models/message/text_message.dart';
-import 'package:fluchat/models/user.dart';
+import 'package:fluchat/models/user/user.dart';
 import 'package:fluchat/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:fluchat/extensions/datetime_extension.dart';

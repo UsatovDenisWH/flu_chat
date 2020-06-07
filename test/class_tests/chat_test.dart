@@ -1,19 +1,24 @@
-import 'file:///E:/Soft/AndroidStudioProjects/flu_chat/lib/data/data_source/dummy_data_source.dart';
+import 'package:fluchat/data/data_source/dummy_data_source.dart';
 import 'package:fluchat/data/repository.dart';
-import 'package:fluchat/models/message/base_message.dart';
+import 'package:fluchat/di/stream_assembly.dart';
 import 'package:fluchat/models/chat/chat.dart';
+import 'package:fluchat/models/message/base_message.dart';
 import 'package:fluchat/models/message/image_message.dart';
 import 'package:fluchat/models/message/text_message.dart';
-import 'package:fluchat/models/user.dart';
+import 'package:fluchat/models/user/user.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
-/*
-  test("Method getInterlocutors()", () {
+//  TestWidgetsFlutterBinding.ensureInitialized();
+
+/*  test("Method getInterlocutors()", () async {
+    var sa = StreamAssembly();
+    var ds = DummyDataSource(streamAssembly: sa);
+    var repo = Repository(dataSource: ds, streamAssembly: sa);
+    await repo.initRepository();
+
     User currentUser = User(firstName: "Василий Соловьев");
-    Repository.setCurrentUser(currentUser);
+    repo.setCurrentUser(user: currentUser);
     User anotherUser = User(firstName: "Геннадий Веточкин");
     User thirdUser = User(firstName: "Николай Макаров");
 
@@ -22,19 +27,23 @@ void main() {
 //    print(interlocutors[0].firstName + " " + interlocutors[0].lastName);
     expect("${interlocutors[0].firstName}  ${interlocutors[0].lastName}".trim(),
         "Николай Макаров");
-  });
-*/
+  });*/
 
   test("Creating single chat", () async {
+    var sa = StreamAssembly();
+    var ds = DummyDataSource(streamAssembly: sa);
+    var repo = Repository(dataSource: ds, streamAssembly: sa);
+    await repo.initRepository();
+
     User currentUser = User(firstName: "Василий Соловьев");
-    Repository.setCurrentUser(currentUser);
+    repo.setCurrentUser(user: currentUser);
 //    SharedPreferences.setMockInitialValues({
 //      "currentUser_id": currentUser.id,
 //      "currentUser_firstName": currentUser.firstName,
 //      "currentUser_lastName": currentUser.lastName,
 //      "currentUser_avatar": currentUser.avatar
 //    });
-    Repository.initRepository(DummyDataSource());
+
     User anotherUser = User(
         firstName: "  Акакий  Акакиевич      ",
         avatar: "https://pixabay.com/images/id-5077020/");
@@ -86,9 +95,14 @@ void main() {
 //    print("userRole = ${chatItem.userRole}");
   });
 
-  test("Creating group chat", () {
+  test("Creating group chat", () async {
+    var sa = StreamAssembly();
+    var ds = DummyDataSource(streamAssembly: sa);
+    var repo = Repository(dataSource: ds, streamAssembly: sa);
+    await repo.initRepository();
+
     User currentUser = User(firstName: "Василий Соловьев");
-    Repository.setCurrentUser(currentUser);
+    repo.setCurrentUser(user: currentUser);
     User anotherUser = User(firstName: "  Акакий  Акакиевич      ");
     User thirdUser = User(firstName: "Николай Макаров");
 

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:fluchat/models/user.dart';
+import 'package:fluchat/models/user/user.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

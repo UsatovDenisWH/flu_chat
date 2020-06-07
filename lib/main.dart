@@ -1,4 +1,4 @@
-import 'package:fluchat/di_container.dart';
+import 'package:fluchat/di/di_container.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 

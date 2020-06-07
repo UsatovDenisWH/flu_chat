@@ -1,7 +1,7 @@
 import 'package:fluchat/blocs/chat_list_bloc.dart';
 import 'package:fluchat/blocs/common/bloc_provider.dart';
 import 'package:fluchat/models/chat/chat_item.dart';
-import 'package:fluchat/models/user.dart';
+import 'package:fluchat/models/user/user.dart';
 import 'package:fluchat/ui/chat_list/chat_list_item.dart';
 import 'package:flutter/material.dart';
 

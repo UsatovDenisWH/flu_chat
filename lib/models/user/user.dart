@@ -1,3 +1,4 @@
+import 'package:fluchat/models/user/user_item.dart';
 import 'package:fluchat/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -46,4 +47,11 @@ class User {
     }
     return result;
   }
+
+  UserItem toUserItem() => UserItem(
+      id: this.id,
+      fullName: this.getFullName(),
+      avatar: this.avatar,
+      lastVisit: this.lastVisit,
+      isOnline: this.isOnline);
 }

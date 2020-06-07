@@ -45,7 +45,7 @@ class MessageListItem extends StatelessWidget {
               color: bgColor,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Text("Изображение: "),
+            child: Text("Изображение: \u{26F1} \u{1F307}"),
           ));
       return imageMessage;
     } else if (_messageItem.messageType == MessageType.VIDEO) {
@@ -58,7 +58,7 @@ class MessageListItem extends StatelessWidget {
               color: bgColor,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Text("Видео: "),
+            child: Text("Видео: \u{9028} \u{1F3A5} \u{1F3AC}"),
           ));
       return videoMessage;
     }
