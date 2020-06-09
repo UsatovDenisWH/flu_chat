@@ -27,20 +27,11 @@ class _MessageListScreenState extends State<MessageListScreen> {
     _messageItemStream = _bloc.outMessageItems;
   }
 
-  _addMessage(String message) {
+  _addTextMessage(String message) {
     setState(() {
       print("onSubmitted: $message");
       // TODO change on add in MessageListItem
-      /*     _messageItems.add(MessageItem(
-        id: 11,
-        //    this.from,
-        //    this.chat,
-        isIncoming: false,
-        date: DateTime.now(),
-        isReaded: true,
-        text: message,
-        messageType: MessageType.TEXT,
-      ));*/
+      _bloc.addTextMessage(message);
     });
   }
 
@@ -148,7 +139,7 @@ class _MessageListScreenState extends State<MessageListScreen> {
                   border: InputBorder.none, hintText: "Сообщение"),
               controller: _textController,
               onSubmitted: (String message) {
-                _addMessage(message);
+                _addTextMessage(message);
                 _textController.clear();
                 // every item have height ~50 pixels
 /*                _scrollController.animateTo(_messageItems.length * 50.0,

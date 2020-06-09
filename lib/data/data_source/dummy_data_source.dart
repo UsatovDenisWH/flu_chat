@@ -9,13 +9,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_fimber/flutter_fimber.dart';
 
 class DummyDataSource implements IDataSource {
-//  final _changeInDataSource = StreamController<DataSourceEvent>.broadcast();
-//
-//  Sink<DataSourceEvent> get _inChangeInDataSource => _changeInDataSource.sink;
-//
-//  Stream<DataSourceEvent> get outChangeInDataSource =>
-//      _changeInDataSource.stream;
-
   Sink<DataSourceEvent> _inChangeInDataSource;
 
   static List<Chat> _demoChats;
@@ -31,7 +24,7 @@ class DummyDataSource implements IDataSource {
   Future<List<Chat>> loadChats({@required User currentUser}) async {
     if (currentUser == null) {
       return List<Chat>();
-    } else {
+    } else if (_demoChats == null) {
       _demoChats =
           await RestDataGenerator.getDemoChats(currentUser: currentUser);
     }
@@ -121,12 +114,9 @@ class DummyDataSource implements IDataSource {
   }
 
   @override
-  void dispose() {
-//    _changeInDataSource.close();
-  }
+  void dispose() {}
 
   void _handleException(Exception error, StackTrace stackTrace) {
     _log.d("Error in class DummyDataSource", ex: error, stacktrace: stackTrace);
   }
-
 }

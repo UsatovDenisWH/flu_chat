@@ -1,12 +1,24 @@
 import 'dart:core';
 
-import 'package:flutter/foundation.dart';
-
 extension DateTimeExtension on DateTime {
   static final SECOND = 1000;
   static final MINUTE = 60 * SECOND;
   static final HOUR = 60 * MINUTE;
   static final DAY = 24 * HOUR;
+
+  String shortDescription() {
+    final now = DateTime.now();
+    String result;
+
+    if (this.year == now.year &&
+        this.month == now.month &&
+        this.day == now.day) {
+      result = "${this.hour}:${this.minute}";
+    } else {
+      result = "${this.day}/${this.month <10 ? 0 : ""}${this.month}/${this.year - 2000}";
+    }
+    return result;
+  }
 
   String humanizeDiff({DateTime date}) {
     DateTime inDate = date ?? DateTime.now();

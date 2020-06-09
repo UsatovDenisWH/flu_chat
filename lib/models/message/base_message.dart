@@ -1,5 +1,6 @@
 import 'package:fluchat/models/message/message_item.dart';
 import 'package:fluchat/models/user/user.dart';
+import 'package:flutter/foundation.dart';
 
 abstract class BaseMessage {
   final int id;

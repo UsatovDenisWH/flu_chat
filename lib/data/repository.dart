@@ -18,22 +18,6 @@ class Repository implements IRepository {
   List<User> _users;
   Future<bool> isInitialized;
 
-//  final _listChats = StreamController<List<Chat>>.broadcast();
-//  final _listUsers = StreamController<List<User>>.broadcast();
-//  final _listMessages = StreamController<List<BaseMessage>>.broadcast();
-//
-//  Sink<List<Chat>> get _inListChats => _listChats.sink;
-//
-//  Stream<List<Chat>> get outListChats => _listChats.stream;
-//
-//  Sink<List<User>> get _inListUsers => _listUsers.sink;
-//
-//  Stream<List<User>> get outListUsers => _listUsers.stream;
-//
-//  Sink<List<BaseMessage>> get _inListMessages => _listMessages.sink;
-//
-//  Stream<List<BaseMessage>> get outListMessages => _listMessages.stream;
-
   Sink<List<Chat>> _inListChats;
   Sink<List<User>> _inListUsers;
   Sink<List<BaseMessage>> _inListMessages;
@@ -48,7 +32,6 @@ class Repository implements IRepository {
       {@required IDataSource dataSource,
       @required IStreamAssembly streamAssembly}) {
     _dataSource = dataSource;
-//    _dataSource.outChangeInDataSource.listen(onChangeInDataSource);
     streamAssembly.changeInDataSource.listen(onChangeInDataSource);
     this._inListChats = streamAssembly.listChats.sink;
     this._inListUsers = streamAssembly.listUsers.sink;
@@ -221,9 +204,6 @@ class Repository implements IRepository {
 
   @override
   void dispose() {
-//    _listChats.close();
-//    _listUsers.close();
-//    _listMessages.close();
     _log.d("Repository dispose");
   }
 

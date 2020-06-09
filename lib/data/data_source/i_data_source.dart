@@ -7,13 +7,6 @@ import 'package:fluchat/models/user/user.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class IDataSource {
-//  final _changeInDataSource = StreamController<DataSourceEvent>.broadcast();
-//
-//  Sink<DataSourceEvent> get _inChangeInDataSource => _changeInDataSource.sink;
-//
-//  Stream<DataSourceEvent> get outChangeInDataSource =>
-//      _changeInDataSource.stream;
-
   Sink<DataSourceEvent> _inChangeInDataSource;
 
   IDataSource({@required IStreamAssembly streamAssembly});

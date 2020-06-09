@@ -27,21 +27,34 @@ class RestDataGenerator {
 
     var currentlyUser =
         currentUser ?? User(firstName: "RestDataGenerator default");
+    List<int> listRandoms = [];
+    int userIndex;
+    User anotherUser;
+    int quoteIndex;
+
     return List.generate(10, (int i) {
       i++;
-      var userIndex = Random().nextInt(_users.length);
-      var anotherUser = _users[userIndex];
-      var quoteIndex = Random().nextInt(_quotes.length);
+      do {
+        userIndex = Random().nextInt(_users.length);
+      } while (listRandoms.contains(userIndex));
+      listRandoms.add(userIndex);
+      anotherUser = _users[userIndex];
+
+      quoteIndex = Random().nextInt(_quotes.length);
+      var dateMessage = DateTime.now().subtract(Duration(
+          days: Random().nextInt(30),
+          hours: Random().nextInt(24),
+          minutes: Random().nextInt(60)));
       List<BaseMessage> messages = [
         ImageMessage(
             id: 1,
-            from: currentlyUser,
-            date: DateTime.now(),
-            image: "https://picsum.photos/200/300"),
+            from: anotherUser,
+            date: dateMessage,
+            image: "https://i.picsum.photos/id/${i + userIndex}/300/200.jpg"),
         TextMessage(
             id: 2,
             from: anotherUser,
-            date: DateTime.now(),
+            date: dateMessage,
             text: _quotes[quoteIndex])
       ];
 

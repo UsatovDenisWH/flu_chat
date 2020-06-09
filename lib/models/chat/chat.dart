@@ -69,9 +69,9 @@ class Chat {
     String title;
     String shortDescription = "Сообщений ещё нет";
     bool isOnline;
-    String lastMessageDate = _getLastMessageDate().humanizeDiff();
+    String lastMessageDate = _getLastMessageDate().shortDescription();
 
-    BaseMessage lastMessage = _getLastMessage();
+    BaseMessage lastMessage = getLastMessage();
     if (lastMessage != null) {
       if (lastMessage.runtimeType == TextMessage) {
         shortDescription = lastMessage.getText();
@@ -123,7 +123,7 @@ class Chat {
     }
   }
 
-  BaseMessage _getLastMessage() {
+  BaseMessage getLastMessage() {
     if (messages.isNotEmpty) {
       return messages.last;
     } else {
@@ -131,7 +131,7 @@ class Chat {
     }
   }
 
-  DateTime _getLastMessageDate() => _getLastMessage()?.date;
+  DateTime _getLastMessageDate() => getLastMessage()?.date;
 
   List<User> _getInterlocutors() {
     var currentUser = DiContainer.getRepository().getCurrentUser();
@@ -149,7 +149,7 @@ class Chat {
           usersPropertiesMap[userId][UserProperty.ID_READ_MESSAGE] as int;
     }
     readMessageId ??= 0;
-    var lastMessageId = _getLastMessage()?.id ?? 0;
+    var lastMessageId = getLastMessage()?.id ?? 0;
     return lastMessageId - readMessageId;
   }
 

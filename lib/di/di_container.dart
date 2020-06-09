@@ -53,7 +53,9 @@ class DiContainer {
   }
 
   static void _registerServices() {
-    _injector.map<IStreamAssembly>((i) => StreamAssembly(), isSingleton: true);
+    _injector.map<IStreamAssembly>(
+        (i) => StreamAssembly(),
+        isSingleton: true);
 
     _injector.map<IDataSource>(
         (i) => DummyDataSource(streamAssembly: i.get<IStreamAssembly>()),

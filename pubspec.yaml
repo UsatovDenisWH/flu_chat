@@ -36,6 +36,8 @@ dependencies:
 
   rxdart: ^0.24.1
 
+  network_image_to_byte: ^0.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

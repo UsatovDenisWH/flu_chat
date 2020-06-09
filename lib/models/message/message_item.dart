@@ -11,6 +11,7 @@ class MessageItem {
   final DateTime date;
   final bool isReaded;
   final String text;
+  final String image;
   final MessageType messageType;
 
   MessageItem({
@@ -21,6 +22,7 @@ class MessageItem {
     this.date,
     this.isReaded,
     this.text,
+    this.image,
     this.messageType,
   });
 }

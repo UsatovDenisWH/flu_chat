@@ -39,13 +39,13 @@ class MessageListItem extends StatelessWidget {
       Widget imageMessage = Padding(
           padding: messagePadding,
           child: Container(
-            height: 50.0,
+            height: 200.0,
             padding: EdgeInsets.all(8.0),
             decoration: BoxDecoration(
               color: bgColor,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Text("Изображение: \u{26F1} \u{1F307}"),
+            child: Image.network(_messageItem.image)/*Text("Изображение: \u{26F1} \u{1F307}")*/,
           ));
       return imageMessage;
     } else if (_messageItem.messageType == MessageType.VIDEO) {

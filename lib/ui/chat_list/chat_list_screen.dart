@@ -5,7 +5,6 @@ import 'package:fluchat/models/user/user.dart';
 import 'package:fluchat/ui/chat_list/chat_list_item.dart';
 import 'package:flutter/material.dart';
 
-// Widget class
 class ChatListScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _ChatListScreenState();
@@ -16,7 +15,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
   User _currentUser;
   Stream<List<ChatItem>> _chatItemStream;
   AppBar _appBar;
-  TextEditingController _searchQueryController = TextEditingController();
+  final TextEditingController _searchQueryController = TextEditingController();
   String _searchQuery;
 
   @override
@@ -25,7 +24,7 @@ class _ChatListScreenState extends State<ChatListScreen> {
     _bloc = BlocProvider.of(context);
     _currentUser = _bloc.currentUser;
     _chatItemStream = _bloc.outChatItems;
-    _bloc.refreshChatList();
+//    _bloc.refreshChatList();
     _appBar = _defaultAppBar();
     _searchQueryController.addListener(_updateSearchQuery);
   }
@@ -81,7 +80,6 @@ class _ChatListScreenState extends State<ChatListScreen> {
             hintStyle: TextStyle(color: Colors.white70, fontSize: 20.0),
           ),
           style: TextStyle(color: Colors.white, fontSize: 20.0),
-//          onChanged: (query) => _updateSearchQuery,
         ),
         actions: <Widget>[
           IconButton(
@@ -139,5 +137,3 @@ class _ChatListScreenState extends State<ChatListScreen> {
     });
   }
 }
-
-// State class

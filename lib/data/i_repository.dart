@@ -10,26 +10,10 @@ import 'package:flutter/foundation.dart';
 abstract class IRepository {
   IDataSource _dataSource;
   User _currentUser;
-  Chat _currentChatId;
+  String _currentChatId;
   List<Chat> _chats;
   List<User> _users;
   Future<bool> isInitialized;
-
-//  final _listChats = StreamController<List<Chat>>.broadcast();
-//  final _listUsers = StreamController<List<User>>.broadcast();
-//  final _listMessages = StreamController<List<BaseMessage>>.broadcast();
-//
-//  Sink<List<Chat>> get _inListChats => _listChats.sink;
-//
-//  Stream<List<Chat>> get outListChats => _listChats.stream;
-//
-//  Sink<List<User>> get _inListUsers => _listUsers.sink;
-//
-//  Stream<List<User>> get outListUsers => _listUsers.stream;
-//
-//  Sink<List<BaseMessage>> get _inListMessages => _listMessages.sink;
-//
-//  Stream<List<BaseMessage>> get outListMessages => _listMessages.stream;
 
   Sink<List<Chat>> _inListChats;
   Sink<List<User>> _inListUsers;
